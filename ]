@@ -1,0 +1,25 @@
+# scsd
+Source-control-storable database.
+
+I have recently felt the need for an embedded database whose data needed to be
+checked into source control. It just feels wrong to make devs check in a file
+type that is binary in nature. I set out to make a text-based embedded database
+file format to fill this need.
+
+I have previously made [a text-based table
+format](https://github.com/djha-skin/mtn) in the past. I felt like many things I
+did then were close to what I needed, but that there were some real annoyances I
+felt I would have as someone _actually using the format_. I liked that I made
+just the JSON types representable. JSON did a good job with the types they chose
+to represent. I also liked that there were comments in the format. I did not
+like that strings needed a prepended apostrophe. That felt annoying. I also
+didn't like that tabs were used as separators. Tabs are basically evil.
+It would be nice if the database format could represent the usual JSON
+datatypes. However, I also feel like each column within a table should be able
+to be typed in a natural way. , and I felt like this was
+missing. I also didn't like how strings needed to have an apostrophe prepended.
+That felt annoying. Strings should be presented as-is.
+
+
+
+* 
