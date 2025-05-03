@@ -20,6 +20,7 @@ Dan's database is a collection of data that is so, so interesting.
 
 |uid|field_1|__field2|field3__|
 |-:|:-|-|:-:|
+|1|**foo|bar**|*baz|qux*|
 
 
 ```
@@ -35,6 +36,7 @@ Should look like this:
 > 
 > |uid|field_1|__field2|field3__|
 > |-:|:-|-|:-:|
+> |1|**foo|bar**|*baz|qux*|
 > 
 > 
 ## Goals
