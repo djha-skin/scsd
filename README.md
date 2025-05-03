@@ -297,12 +297,12 @@ hex = %30 - %39 ; digits
     / %41 - %46 ; A-F
 
 escaped = %61 ; a (alarm/bell)
-            / %62 ; b (backspace)
-            / %6e ; n (newline)
-            / %76 ; v (vertical tab)
-            / %74 ; t (tab)
-            / %75 4hex ; u (unicode escape)
-            / ascii-punct
+        / %62 ; b (backspace)
+        / %6e ; n (newline)
+        / %76 ; v (vertical tab)
+        / %74 ; t (tab)
+        / %75 4hex ; u (unicode escape)
+        / ascii-punct
 
 unescaped-char = %32 - %2c   ; Up to dash
                / %2e - %39   ; Past dash, up to colon
@@ -357,9 +357,9 @@ column-type = column-type-string
 table-typespec = pipe 1*(column-type pipe) line-sep
 
 field-data = *1( string
-               / keyword
-               / number
-               / boolean )
+           / keyword
+           / number
+           / boolean )
 
 table-record = pipe 1*(field-data pipe) line-sep
 
