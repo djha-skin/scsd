@@ -14,17 +14,51 @@ extension](https://www.uv.es/wikibase/doc/cas/pandoc_manual_2.7.3.wiki?95).
 -*- mode: markdown -*-
 vim: set filetype=markdown tabstop=2 shiftwidth=2 formatoptions+=cn expandtab
 
-# dans_database
+# hospital
 
-Dan's database is a collection of data that is so, so interesting.
+ACME hospital records. Distribution is expressly prohibited outside the
+organization by applicable law.
 
-## the_rotterdam
+## people
 
+This table houses **all** the people in the database.
 
+|person_id|firstname|lastname|birth-year|birth-month|birth-day|
+|-:|-|-|-|-:|-:|-:|-:|
+|1|Daniel|Haskin|1901|01|01|
+|2|Joshua|Melburn|1982|04|06|
+|3|Fay|Bingham|2022|07|15|
+|4|Jordan|Slinger|1995|03|28|
+|5|Bo|Kent|1951|09|03|
 
-|uid|field_1|__field2|field3__|
-|-:|:-|-|:-:|
-|1|**foo|bar**|*baz|qux*|
+## departments
+
+A root list of department entities.
+
+|did|name|slug|
+|-:|-|:-|
+|1|Podiatry|pod_dept|
+|2|Pediatric Medicine|ped_dept|
+
+## doctors
+
+A *many-to-one* relation between doctors and departments.
+
+|doctor_id|person_id|department_id|
+|-:|-:|-:|
+|1|2|2|
+|2|5|2|
+
+## patients
+
+A *many-to-many* relation between doctors and patients.
+
+|patient_id|person_id|doctor_id|
+|-:|-:|-:|
+|1|1|1|
+|2|5|1|
+|3|3|2|
+|4|3|1|
 
 
 ```
@@ -35,17 +69,52 @@ Should look like this:
 > -*- mode: markdown -*-
 > vim: set filetype=markdown tabstop=2 shiftwidth=2 formatoptions+=cn expandtab
 > 
-> # dans_database
+> # hospital
 > 
-> Dan's database is a collection of data that is so, so interesting.
+> ACME hospital records. Distribution is expressly prohibited outside the
+> organization by applicable law.
 > 
-> ## the_rotterdam
+> ## people
 > 
-> |uid|field_1|__field2|field3__|
-> |-:|:-|-|:-:|
-> |1|**foo|bar**|*baz|qux*|
+> This table houses **all** the people in the database.
 > 
+> |person_id|firstname|lastname|birth-year|birth-month|birth-day|
+> |-:|-|-|-|-:|-:|-:|-:|
+> |1|Daniel|Haskin|1901|01|01|
+> |2|Joshua|Melburn|1982|04|06|
+> |3|Fay|Bingham|2022|07|15|
+> |4|Jordan|Slinger|1995|03|28|
+> |5|Bo|Kent|1951|09|03|
 > 
+> ## departments
+> 
+> A root list of department entities.
+> 
+> |did|name|slug|
+> |-:|-|:-|
+> |1|Podiatry|pod_dept|
+> |2|Pediatric Medicine|ped_dept|
+> 
+> ## doctors
+> 
+> A *many-to-one* relation between doctors and departments.
+> 
+> |doctor_id|person_id|department_id|
+> |-:|-:|-:|
+> |1|2|2|
+> |2|5|2|
+> 
+> ## patients
+> 
+> A *many-to-many* relation between doctors and patients.
+> 
+> |patient_id|person_id|doctor_id|
+> |-:|-:|-:|
+> |1|1|1|
+> |2|5|1|
+> |3|3|2|
+> |4|3|1|
+
 ## Goals
 
 * Be a first-class citizen within a code SCM repository. Therefore, be
