@@ -24,6 +24,19 @@ Dan's database is a collection of data that is so, so interesting.
 
 ```
 
+Should look like this:
+
+
+> # dans_database
+> 
+> Dan's database is a collection of data that is so, so interesting.
+> 
+> ## the_rotterdam
+> 
+> |uid|field_1|__field2|field3__|
+> |-:|:-|-|:-:|
+> 
+> 
 ## Goals
 
 * Be a first-class citizen within a code SCM repository. Therefore, be
