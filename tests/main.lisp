@@ -1,9 +1,13 @@
 ;;;; tests/main.lisp
 
 (defpackage #:scsd-test
-  (:use #:cl #:fiveam #:scsd #:scsd/utils) ; Added :scsd/utils
-  ;; No longer need main :scsd package? Keep for now, might need parse-scsd later
-  )
+  (:use #:cl #:fiveam #:scsd/utils #:scsd/conditions) ; Removed #:scsd
+  ;; Import internal parser symbols needed for testing
+  (:import-from #:scsd/parser
+                #:database-title-line-p
+                #:extract-database-name
+                #:parse-scsd ; Use internal parse-scsd for specific error tests
+                ))
 
 (in-package #:scsd-test)
 
@@ -28,6 +32,44 @@
     (is (string= (second lines) "")) ; Blank line
     (is (string= (third lines) "This database only has a name and description."))
     (is (string= (fourth lines) "No tables here."))))
+
+;; Tests for Database Title Parsing (Phase 2)
+(test database-title-predicate
+  "Test the database-title-line-p predicate."
+  (is-true (database-title-line-p "# DB Name"))
+  (is-true (database-title-line-p "# Another Name "))
+  (is-true (database-title-line-p "# name-with-symbols_123"))
+  (is-false (database-title-line-p " # Not a title"))
+  (is-false (database-title-line-p "#NotATitle")) ; Missing space
+  (is-false (database-title-line-p "## Not a DB title")) ; H2
+  (is-false (database-title-line-p "")))
+
+(test database-name-extraction
+  "Test the extract-database-name function."
+  (is (string= (extract-database-name "# DB Name") "DB Name"))
+  (is (string= (extract-database-name "# Another Name ") "Another Name"))
+  (is (string= (extract-database-name "# name-with-symbols_123 ") "name-with-symbols_123")))
+  ;; Malformed case (empty name) is handled by parse-scsd error, not directly by extractor
+
+(test parse-scsd-db-name-errors
+  "Test error handling for missing or malformed DB names in parse-scsd."
+  ;; Test missing title error
+  (signals missing-database-title-error
+    (parse-scsd "Just some text
+No title here"))
+  (signals missing-database-title-error
+    (parse-scsd "## Not a DB title"))
+  (signals missing-database-title-error
+    (parse-scsd ""))
+
+  ;; Test malformed title error (empty name)
+  (signals malformed-database-title-error
+    (parse-scsd "# ")) ; Title marker but empty name
+  (signals malformed-database-title-error
+    (parse-scsd "#    ")) ; Title marker but only whitespace
+
+  ;; Test valid case does NOT signal these errors
+  (finishes (parse-scsd "# Valid Name")))
 
 ;; Placeholder sanity check (can be removed later)
 (test sanity-check

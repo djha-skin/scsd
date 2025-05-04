@@ -121,4 +121,10 @@ Initial setup complete. Starting parser implementation.
     - Updated `parse-scsd` to signal `malformed-database-title-error` if extracted name is empty.
     - Fixed compilation issues (FORMAT string in condition, DECLARE placement in parser).
 - Task "Add error handling for malformed database title line" completed. Tests pass.
-- Starting next task: "Add tests for database name parsing". Will add tests to `tests/main.lisp`.
+- Task: "Add tests for database name parsing".
+    - Added tests `database-title-predicate`, `database-name-extraction`, `parse-scsd-db-name-errors` to `tests/main.lisp`.
+    - Imported required internal symbols into `#:scsd-test` package.
+    - Fixed package name conflict between `scsd:parse-scsd` and imported `scsd/parser:parse-scsd` by removing `:use #:scsd` from test package.
+- Task "Add tests for database name parsing" completed. Tests pass.
+- Starting Parser Implementation Phase 3: Database Description.
+- Starting next task: "Add function to detect description lines (not starting with # or |)". Will add to `src/parser.lisp`.

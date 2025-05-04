@@ -1,11 +1,7 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add tests for database name parsing
-  - [ ] Test valid names
-  - [ ] Test missing hash
-  - [ ] Test empty name
-  - [ ] Test malformed lines
+- [ ] Add function to detect description lines (not starting with # or |)
 
 ## Blocked
 None currently.
@@ -28,6 +24,11 @@ None currently.
 - [X] Add function to extract database name from title line
 - [X] Add error handling for missing database name
 - [X] Add error handling for malformed database title line
+- [X] Add tests for database name parsing
+  - [X] Test valid names
+  - [X] Test missing hash
+  - [X] Test empty name
+  - [X] Test malformed lines
 
 ## Backlog
 
@@ -41,7 +42,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 3: Database Description
-- [ ] Add function to detect description lines (not starting with # or |)
 - [ ] Add function to collect description lines until table or EOF
 - [ ] Add function to properly join description lines
 - [ ] Add tests for description parsing
