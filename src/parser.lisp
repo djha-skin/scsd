@@ -27,6 +27,11 @@
 Assumes line starts with '# '. Trims whitespace from the extracted name."
   (trim-whitespace (subseq title-line 2))) ; Skip "# "
 
+(defun extract-table-name (title-line)
+  "Extracts the table name from a validated title line.
+Assumes line starts with '## '. Trims whitespace from the extracted name."
+  (trim-whitespace (subseq title-line 3))) ; Skip "## "
+
 ;;; Main parsing logic (placeholder)
 
 (defun parse-scsd (input)
@@ -36,8 +41,8 @@ Assumes line starts with '# '. Trims whitespace from the extracted name."
   (let* ((lines (read-lines input))
          (current-index 0)
          (db-name nil)
-         (db-description nil)) ; Changed from db-description-lines
-    (declare (ignorable db-name db-description current-index)) ; Updated declare
+         (db-description nil))
+    (declare (ignorable db-name db-description current-index))
 
     ;; Step 2: Find and process database title
     (let ((title-line-index (position-if #'database-title-line-p lines)))
@@ -57,12 +62,29 @@ Assumes line starts with '# '. Trims whitespace from the extracted name."
     (let ((description-lines
             (loop :for line :in (nthcdr current-index lines)
                   :for line-num :from (1+ current-index) ; 1-based for potential errors
-                  :while (and line (description-line-p line)) ; Stop if not description line or EOF
+                  :while (and line (description-line-p line))
                   :do (incf current-index) ; Consume the line
                   :collect line)))
-      (setf db-description (join-lines description-lines))) ; Join collected lines
+      (setf db-description (join-lines description-lines)))
 
-    ;; TODO: Find and process tables (starting from current-index)
+    ;; Step 4: Find and process tables
+    (loop :while (< current-index (length lines)) :do
+      (let ((line (nth current-index lines)))
+        (cond
+          ((table-title-line-p line)
+           (let ((table-name (extract-table-name line)))
+             ;; TODO: Validate table name (next task)
+             ;; TODO: Process table description, headers, rows...
+             (declare (ignorable table-name))
+             (incf current-index))) ; Move past table title
+          ((string= (trim-whitespace line) "")
+           (incf current-index)) ; Skip blank lines between elements
+          (t
+           ;; Found unexpected content after description/tables
+           ;; TODO: Define and signal appropriate error (e.g., unexpected-content-error)
+           (warn "Unexpected content found starting line ~A: ~S" (1+ current-index) line)
+           (return))))) ; Stop processing for now
+
 
     ;; Remove placeholder warning eventually
     (warn "SCSD parsing incomplete.")

@@ -150,4 +150,8 @@ Initial setup complete. Starting parser implementation.
 - Task: "Add function to detect table start (double hash)".
     - Verified `table-title-line-p` exists in `src/parser.lisp`.
 - Task "Add function to detect table start (double hash)" completed.
-- Starting next task: "Add function to extract table name". Will add to `src/parser.lisp`.
+- Task: "Add function to extract table name".
+    - Added `extract-table-name` to `src/parser.lisp`.
+    - Updated `parse-scsd` stub to loop through lines after description, detect table titles, and call extractor.
+- Task "Add function to extract table name" completed. Tests pass.
+- Starting next task: "Add validation for table name format". Will add error condition and update parser loop.
