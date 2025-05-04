@@ -29,8 +29,15 @@ more refinement ("Triage"). Break down tasks very small in the TODO.md file.
 Things like "add the ability to parse the database name", "add the ability to
 parse the preamble", etc. We need to be *really* incremental. We need to keep
 the code working throughout. This helps you avoid hallucinations and keeps you
-from getting confused. Commit and push every time you complete a feature and
-return the prompt back to me for every feature as well for review.
+from getting confused.
+
+Commit and push every time you complete a feature and
+return the prompt back to me for every feature as well for review. Provide
+detailed commit messages. Feel free to use `git annotate` or look at previous
+commits for a reference of what was done as needed, especially if we are
+starting out on a new AI session. Include in messages that the commit was done
+by you (rather than by me) so you can differentiate in future AI sessions who
+worked on what.
 
 If or you have already done those things, or once you have done them, begin
 working the tasks in sprint board in `./TODO.md`. Make sure to continue to
