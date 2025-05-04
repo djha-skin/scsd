@@ -22,8 +22,24 @@ little at a time. Incremental development is important, because when the AI
 session gets interrupted, you can sometimes forget what you were doing. Going a
 little bit at a time also helps me because if I need to help code or take over,
 I'm not left with something unmanageable and I can pick up where you left off.
-Keep three lists up to date in this file: What you are currently working on
+Keep several lists up to date in this file: What you are currently working on
 ("In Progress"), what you are blocked on or stumped on ("Blocked"), what you
 have done ("Done"), what you have not done ("Backlog"), and tasks that need
-more refinement ("Triage").
+more refinement ("Triage"). Break down tasks very small in the TODO.md file.
+Things like "add the ability to parse the database name", "add the ability to
+parse the preamble", etc. We need to be *really* incremental. We need to keep
+the code working throughout. This helps you avoid hallucinations and keeps you
+from getting confused. Commit and push every time you complete a feature and
+return the prompt back to me for every feature as well for review.
+
+If or you have already done those things, or once you have done them, begin
+working the tasks in sprint board in `./TODO.md`. Make sure to continue to
+update your `AI.md` journal as we go. The code will be compiled using `ros
+build` and tested using `ros test`. Keep the code in a running, working state
+as much as possible. In order to execute any lisp code using ros, make `*.ros`
+scripts instead of using `ros --eval`. Keep them in a folder called `./scripts`
+and update them as needed, reusing them when appropriate. We've had trouble in
+the past with `ros --eval` dropping into a debugger and hanging the AI session.
+As you complete or get stuck on tasks, update the `./TODO.md` file with your
+current status and progress. Feel free to break down tasks further as needed.
 

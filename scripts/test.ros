@@ -1,0 +1,23 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+
+;;; This script runs the test suite for the SCSD library.
+
+(require "asdf")
+
+;; Ensure ASDF knows where to find .asd files in the current project directory
+(pushnew *default-pathname-defaults* asdf:*central-registry* :test #'equal)
+
+;; Load the test system
+(asdf:load-system :scsd-test :force t) ; Changed system name
+
+;; Run the tests defined in the test system
+(let ((results (asdf:test-system :scsd-test))) ; Changed system name
+  (unless results
+    (format *error-output* "Tests failed!~%")
+    (uiop:quit 1))) ; Exit with non-zero status on failure
+
+(uiop:quit 0) ; Exit with zero status on success

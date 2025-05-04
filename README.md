@@ -115,6 +115,50 @@ Should look like this:
 > |3|3|2|
 > |4|3|1|
 
+## Development Setup
+
+### Prerequisites
+
+*   [Common Lisp Implementation](https://common-lisp.net/implementations) (e.g., SBCL)
+*   [ASDF](https://asdf.common-lisp.dev/) (usually included with Lisp implementations)
+*   [Roswell](https://github.com/roswell/roswell) (recommended for easy script execution and dependency management)
+*   Optional: [Quicklisp](https://www.quicklisp.org/) (for managing dependencies like `fiveam`)
+
+### Setup
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository-url>
+    cd scsd
+    ```
+    *(Replace `<repository-url>` with the actual URL)*
+2.  **Install Dependencies:**
+    If using Roswell and Quicklisp, dependencies like `fiveam` (for tests) should be handled automatically when running scripts or loading the system. If managing manually, ensure `fiveam` is installed via Quicklisp:
+    ```lisp
+    ;; In your Lisp REPL
+    (ql:quickload :fiveam)
+    ```
+3.  **Running Tests:**
+    Use the provided Roswell script:
+    ```bash
+    ./scripts/test.ros
+    ```
+    Alternatively, load the test system in your REPL and run the tests:
+    ```lisp
+    (asdf:load-system :scsd-test)
+    (asdf:test-system :scsd-test)
+    ;; Or directly call the test runner function:
+    ;; (ql:quickload :scsd-test) ; if not already loaded
+    ;; (scsd-test:run-tests)
+    ```
+4.  **Loading the Library:**
+    Load the system in your Lisp REPL:
+    ```lisp
+    (asdf:load-system :scsd)
+    ;; Or using Quicklisp:
+    ;; (ql:quickload :scsd)
+    ```
+
 ## Goals
 
 * Be a first-class citizen within a code SCM repository. Therefore, be
@@ -229,7 +273,8 @@ always allowed by the spec, and signify a JSON-like null value.
 Strings must not contain non-printables, tabs, or line separation characters.
 They support backslash escaping of any ASCII punctuation character (to be
 conformant with CommonMark), `\a` for alarm, `\b` for backspace, `\f` for form
-feed, `\n` for line feed, `\r` for carriage return, `\v` for vertical tab, `\t`
+feed, `
+` for line feed, `` for carriage return, `\v` for vertical tab, `	`
 for tab, and `\uXXXX` for 16-bit unicode character encoding. In particular,
 dashes, colons, and pipes MUST be escaped. A single unescaped dash (`-`) in the
 table cell lines indicates an empty string. All characters between the pipes of
