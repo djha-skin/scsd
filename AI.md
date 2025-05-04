@@ -147,4 +147,7 @@ Initial setup complete. Starting parser implementation.
     - Added skipped test `parse-scsd-db-description` (pending parser return value).
 - Task "Add tests for description parsing" completed. Tests pass.
 - Starting Parser Implementation Phase 4: Table Name.
-- Starting next task: "Add function to detect table start (double hash)". Will add predicate to `src/parser.lisp`.
+- Task: "Add function to detect table start (double hash)".
+    - Verified `table-title-line-p` exists in `src/parser.lisp`.
+- Task "Add function to detect table start (double hash)" completed.
+- Starting next task: "Add function to extract table name". Will add to `src/parser.lisp`.
