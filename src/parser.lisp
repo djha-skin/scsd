@@ -20,6 +20,14 @@
          (not (char= (char trimmed-line 0) #\#))
          (not (char= (char trimmed-line 0) #\|)))))
 
+(defun pipe-table-line-p (line)
+  "Checks if a line starts and ends with a pipe ('|').
+   This could be a header, type spec, or data row."
+  (let ((len (length line)))
+    (and (>= len 2) ; Must have at least start and end pipe
+         (char= (char line 0) #\|)
+         (char= (char line (1- len)) #\|))))
+
 ;;; Data Extractors
 
 (defun extract-database-name (title-line)
@@ -72,7 +80,7 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
            (incf current-index) ; Consume title line
            (let* ((table-name (extract-table-name line))
                   (table-description nil))
-             (declare (ignorable table-name table-description)) ; Moved declare up
+             (declare (ignorable table-name table-description))
              ;; Validate table name
              (when (string= table-name "")
                (error 'malformed-table-title-error
@@ -86,8 +94,18 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
                            :collect desc-line)))
                (setf table-description (join-lines description-lines)))
 
-             ;; TODO: Store table name and description
-             ;; TODO: Process headers, types, rows (starting at current-index)
+             ;; Expect Header line
+             (let ((header-line (when (< current-index (length lines)) (nth current-index lines))))
+               (declare (ignorable header-line))
+               (unless (and header-line (pipe-table-line-p header-line))
+                 ;; TODO: Define and signal missing-header-error
+                 (error "Missing or invalid table header line after description for table '~A' near line ~A"
+                        table-name (1+ current-index)))
+               (incf current-index) ; Consume header line
+               ;; TODO: Split header line (next task)
+               )
+
+             ;; TODO: Process types, rows (starting at current-index)
              )) ; End LET* for current table
           ((string= (trim-whitespace line) "")
            (incf current-index)) ; Skip blank lines between elements

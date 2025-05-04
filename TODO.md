@@ -1,7 +1,7 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add function to detect header line (starts with |)
+- [ ] Add function to split header line into column names
 
 ## Blocked
 None currently.
@@ -49,6 +49,7 @@ None currently.
   - [X] Test single line description
   - [X] Test multi-line description
   - [X] Test empty description
+- [X] Add function to detect header line (starts with |)
 
 ## Backlog
 
@@ -71,7 +72,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 6: Column Headers
-- [ ] Add function to split header line into column names
 - [ ] Add function to validate column name format
 - [ ] Add function to store column names
 - [ ] Add tests for header parsing

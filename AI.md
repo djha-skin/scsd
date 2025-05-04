@@ -176,4 +176,8 @@ Initial setup complete. Starting parser implementation.
     - Added skipped test `parse-scsd-table-description`.
 - Task "Add tests for table description parsing" completed. Tests pass.
 - Starting Parser Implementation Phase 6: Column Headers.
-- Starting next task: "Add function to detect header line (starts with |)".
+- Task: "Add function to detect header line (starts with |)".
+    - Added predicate `pipe-table-line-p` (renamed from header-line-p) to `src/parser.lisp`.
+    - Updated parser loop to check for header line using the predicate.
+- Task "Add function to detect header line (starts with |)" completed. Tests pass.
+- Starting next task: "Add function to split header line into column names".
