@@ -168,4 +168,7 @@ Initial setup complete. Starting parser implementation.
     - Corrected logic/expectations in `parse-scsd-table-name-errors` based on ABNF spec.
 - Task "Add tests for table name parsing" completed. Tests pass.
 - Starting Parser Implementation Phase 5: Table Description.
-- Starting next task: "Add function to collect table description lines". Will modify parser loop.
+- Task: "Add function to collect table description lines". 
+    - Updated parser loop to collect description lines after table title.
+- Task "Add function to collect table description lines" completed. Tests pass.
+- Starting next task: "Add tests for table description parsing".
