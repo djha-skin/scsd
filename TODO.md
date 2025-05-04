@@ -1,11 +1,7 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add function to validate type markers
-  - [ ] Validate string type (-)
-  - [ ] Validate keyword type (:-)
-  - [ ] Validate number type (-:)
-  - [ ] Validate boolean type (:-:)
+- [ ] Add function to store column types
 
 ## Blocked
 None currently.
@@ -64,6 +60,11 @@ None currently.
   - [X] Test whitespace handling
 - [X] Add function to parse type specification line
   - [X] Ensure type marker parsing trims whitespace (e.g., `| - |` vs `|-|`)
+- [X] Add function to validate type markers
+  - [X] Validate string type (-)
+  - [X] Validate keyword type (:-)
+  - [X] Validate number type (-:)
+  - [X] Validate boolean type (:-:)
 
 ## Backlog
 
@@ -89,7 +90,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 7: Column Types
-- [ ] Add function to store column types
 - [ ] Add tests for type specification parsing
   - [ ] Test each valid type
   - [ ] Test invalid type markers

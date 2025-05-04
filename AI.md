@@ -186,7 +186,6 @@ Initial setup complete. Starting parser implementation.
     - Imported `str:split` into `#:scsd/parser` package.
     - Updated `scripts/test.ros` to `ql:quickload :str`.
     - Updated parser loop to call splitter.
-    - Fixed bug in my own implementation of `split-pipe-table-line` before switching to `str:split`.
 - Task "Add function to split header line into column names" completed. Tests pass.
 - Task: "Add function to validate column name format".
     - Added `malformed-header-error` condition.

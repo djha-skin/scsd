@@ -137,13 +137,19 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
                           :typespec-count (length trimmed-types)
                           :line-number typespec-line-num
                           :typespec-line typespec-line))
-                 ;; TODO: Validate actual type markers (next task)
-                 ;; TODO: Store column types
-                 ;; (format t "~&Parsed types for table '~A': ~S~%" table-name trimmed-types) ; Removed
+                 ;; Validate markers
+                 (loop :for type-marker :in trimmed-types
+                       :for col-index :from 0
+                       :unless (member type-marker '("-" ":-" "-:" ":-:") :test #'string=)
+                         :do (error 'malformed-typespec-error
+                                    :reason (format nil "Invalid type marker '~A' found for column ~A"
+                                                    type-marker (1+ col-index))
+                                    :line-number typespec-line-num
+                                    :typespec-line typespec-line))
+                 ;; TODO: Store column types (next task)
                  ))
 
              ;; TODO: Process rows (starting at current-index)
-             ;; (format t "~&Parsed table '~A' with headers: ~S~%" table-name column-names) ; Removed
              )) ; End LET* for current table
           ((string= (trim-whitespace line) "")
            (incf current-index)) ; Skip blank lines between elements
