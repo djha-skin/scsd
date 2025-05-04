@@ -81,6 +81,7 @@ None currently.
 
 ### Parser Implementation - Phase 7: Column Types
 - [ ] Add function to parse type specification line
+  - [ ] Ensure type marker parsing trims whitespace (e.g., `| - |` vs `|-|`)
 - [ ] Add function to validate type markers
   - [ ] Validate string type (-)
   - [ ] Validate keyword type (:-)
@@ -91,16 +92,20 @@ None currently.
   - [ ] Test each valid type
   - [ ] Test invalid type markers
   - [ ] Test mismatched column counts
+  - [ ] Test type parsing with extra whitespace (e.g., `| - |`, `| :- |`)
 
 ### Parser Implementation - Phase 8: Basic Data Rows
 - [ ] Add function to detect data rows
 - [ ] Add function to split row into fields
+  - [ ] Ensure splitting does *not* trim whitespace around cell content
 - [ ] Add function to validate field count matches headers
 - [ ] Add basic string field parsing
+  - [ ] Ensure string field parsing preserves leading/trailing whitespace within cell pipes
 - [ ] Add tests for basic row parsing
   - [ ] Test valid rows
   - [ ] Test empty fields
   - [ ] Test mismatched field counts
+  - [ ] Test rows with leading/trailing whitespace in string fields
 
 ### Parser Implementation - Phase 9: Data Type Parsing
 - [ ] Add number parsing

@@ -63,6 +63,8 @@ Initial setup complete. Starting parser implementation.
 - Tables should be primary objects that support operations
 - Keep data structures immutable where possible
 - Use internal packages (`#:scsd/...`) to avoid polluting the main `#:scsd` package. Re-export public API from main `scsd.lisp`.
+- **Whitespace Handling:** Remember that leading/trailing whitespace *is significant* within data cells (between pipes in data rows) and must be preserved. Whitespace *should be ignored/trimmed* when identifying markers in header/type specification lines.
+
 
 ## Session 2025-05-04 15:38
 

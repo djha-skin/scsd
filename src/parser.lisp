@@ -69,18 +69,32 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
             (line-num (1+ current-index)))
         (cond
           ((table-title-line-p line)
-           (let ((table-name (extract-table-name line)))
-             (declare (ignorable table-name))
+           (incf current-index) ; Consume title line
+           (let* ((table-name (extract-table-name line))
+                  (table-description nil))
+             (declare (ignorable table-name table-description)) ; Moved declare up
+             ;; Validate table name
              (when (string= table-name "")
                (error 'malformed-table-title-error
                       :line-number line-num :title-line line))
-             ;; TODO: Process table description, headers, rows...
-             (incf current-index)))
+
+             ;; Collect table description
+             (let ((description-lines
+                     (loop :for desc-line := (when (< current-index (length lines)) (nth current-index lines))
+                           :while (and desc-line (description-line-p desc-line))
+                           :do (incf current-index)
+                           :collect desc-line)))
+               (setf table-description (join-lines description-lines)))
+
+             ;; TODO: Store table name and description
+             ;; TODO: Process headers, types, rows (starting at current-index)
+             )) ; End LET* for current table
           ((string= (trim-whitespace line) "")
-           (incf current-index))
+           (incf current-index)) ; Skip blank lines between elements
           (t
+           ;; Found unexpected content
            ;; TODO: Define and signal error
-           ;; (warn "Unexpected content found starting line ~A: ~S" line-num line) ; Removed temp warning
+           (warn "Unexpected content found starting line ~A: ~S" line-num line)
            (return))))) ; Stop processing for now
 
     ;; Placeholder return
