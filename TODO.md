@@ -1,7 +1,11 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add function to store column names
+- [ ] Add tests for header parsing
+  - [ ] Test basic column names
+  - [ ] Test empty column names
+  - [ ] Test malformed header lines
+  - [ ] Test whitespace handling
 
 ## Blocked
 None currently.
@@ -52,6 +56,7 @@ None currently.
 - [X] Add function to detect header line (starts with |)
 - [X] Add function to split header line into column names
 - [X] Add function to validate column name format
+- [X] Add function to store column names
 
 ## Backlog
 
@@ -74,11 +79,7 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 6: Column Headers
-- [ ] Add tests for header parsing
-  - [ ] Test basic column names
-  - [ ] Test empty column names
-  - [ ] Test malformed header lines
-  - [ ] Test whitespace handling
+*None remaining*
 
 ### Parser Implementation - Phase 7: Column Types
 - [ ] Add function to parse type specification line

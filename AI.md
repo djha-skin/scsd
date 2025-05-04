@@ -187,4 +187,8 @@ Initial setup complete. Starting parser implementation.
     - Updated `scripts/test.ros` to `ql:quickload :str`.
     - Updated parser loop to call splitter.
 - Task "Add function to split header line into column names" completed. Tests pass.
-- Starting next task: "Add function to validate column name format".
+- Task: "Add function to validate column name format".
+    - Added `malformed-header-error` condition.
+    - Updated parser to check for `null` or `""` in split column names.
+- Task "Add function to validate column name format" completed. Tests pass.
+- Starting next task: "Add function to store column names". Will modify parser state.

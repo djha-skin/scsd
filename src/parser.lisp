@@ -87,8 +87,9 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
           ((table-title-line-p line)
            (incf current-index) ; Consume title line
            (let* ((table-name (extract-table-name line))
-                  (table-description nil))
-             (declare (ignorable table-name table-description))
+                  (table-description nil)
+                  (column-names nil)) ; Add variable for column names
+             (declare (ignorable table-name table-description column-names)) ; Update declare
              ;; Validate table name
              (when (string= table-name "")
                (error 'malformed-table-title-error
@@ -104,21 +105,20 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
 
              ;; Expect Header line
              (let ((header-line (when (< current-index (length lines)) (nth current-index lines))))
-               (declare (ignorable header-line))
+               ;; (declare (ignorable header-line)) ; No longer needed here
                (unless (and header-line (pipe-table-line-p header-line))
                  (error "Missing or invalid table header line after description for table '~A' near line ~A"
                         table-name (1+ current-index)))
                (incf current-index) ; Consume header line
-               (let ((column-names (split-pipe-table-line header-line)))
-                 (declare (ignorable column-names))
+               (let ((split-names (split-pipe-table-line header-line)))
                  ;; Validate column names
-                 (when (or (null column-names) (member "" column-names :test #'string=))
+                 (when (or (null split-names) (member "" split-names :test #'string=))
                    (error 'malformed-header-error
                           :reason "Header contains empty column names (e.g., '||' or starts/ends with '||')"
                           :line-number (1- current-index) ; Line number of the header line
                           :header-line header-line))
-                 ;; TODO: Store column names
-                 ))
+                 ;; Store column names
+                 (setf column-names split-names)))
              ;; TODO: Process types, rows (starting at current-index)
              )) ; End LET* for current table
           ((string= (trim-whitespace line) "")
