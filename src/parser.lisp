@@ -89,8 +89,8 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
            (let* ((table-name (extract-table-name line))
                   (table-description nil)
                   (column-names nil)
-                  (column-types nil)) ; Added variable for types
-             (declare (ignorable table-name table-description column-names column-types)) ; Update declare
+                  (column-types nil))
+             (declare (ignorable table-name table-description column-names column-types))
              ;; Validate table name
              (when (string= table-name "")
                (error 'malformed-table-title-error
@@ -112,12 +112,10 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
                         :line-number (1+ current-index)))
                (incf current-index) ; Consume header line
                (let ((split-names (split-pipe-table-line header-line)))
-                 ;; Validate column names
                  (when (or (null split-names) (member "" split-names :test #'string=))
                    (error 'malformed-header-error
                           :reason "Header contains empty column names (e.g., '||' or starts/ends with '||')"
-                          :line-number (1- current-index) ; Line number of the header line
-                          :header-line header-line))
+                          :line-number (1- current-index) :header-line header-line))
                  (setf column-names split-names)))
 
              ;; Expect Type line
@@ -130,14 +128,12 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
                (incf current-index) ; Consume typespec line
                (let* ((raw-types (split-pipe-table-line typespec-line))
                       (trimmed-types (mapcar #'trim-whitespace raw-types)))
-                 ;; Validate count
                  (unless (= (length trimmed-types) (length column-names))
                    (error 'mismatched-typespec-error
                           :header-count (length column-names)
                           :typespec-count (length trimmed-types)
                           :line-number typespec-line-num
                           :typespec-line typespec-line))
-                 ;; Validate markers
                  (loop :for type-marker :in trimmed-types
                        :for col-index :from 0
                        :unless (member type-marker '("-" ":-" "-:" ":-:") :test #'string=)
@@ -146,12 +142,20 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
                                                     type-marker (1+ col-index))
                                     :line-number typespec-line-num
                                     :typespec-line typespec-line))
-                 ;; Store column types
                  (setf column-types trimmed-types)))
 
-             ;; TODO: Process rows (starting at current-index)
-             (format t "~&Parsed table '~A' headers: ~S types: ~S~%" ; Temp print
-                     table-name column-names column-types)
+             ;; Process Data Rows
+             (loop :for data-line := (when (< current-index (length lines)) (nth current-index lines))
+                   :while (and data-line (pipe-table-line-p data-line)) ; Stop if not pipe line or EOF
+                   :do (incf current-index) ; Consume data line
+                       ;; TODO: Split data line (next task)
+                       ;; TODO: Validate field count (later task)
+                       ;; TODO: Parse fields based on column-types (later task)
+                       ;; TODO: Store row
+                       (format t "~&Data Line: ~S~%" data-line) ; Temp print
+                   )
+             ;; After processing rows for this table, the main loop continues or ends
+             (format t "~&Finished table '~A'. Next index: ~A~%" table-name current-index) ; Temp print
              )) ; End LET* for current table
           ((string= (trim-whitespace line) "")
            (incf current-index)) ; Skip blank lines between elements

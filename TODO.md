@@ -1,7 +1,8 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add function to detect data rows
+- [ ] Add function to split row into fields
+  - [ ] Ensure splitting does *not* trim whitespace around cell content
 
 ## Blocked
 None currently.
@@ -71,6 +72,7 @@ None currently.
   - [X] Test invalid type markers
   - [X] Test mismatched column counts
   - [X] Test type parsing with extra whitespace (e.g., `| - |`, `| :- |`)
+- [X] Add function to detect data rows
 
 ## Backlog
 
@@ -99,8 +101,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 8: Basic Data Rows
-- [ ] Add function to split row into fields
-  - [ ] Ensure splitting does *not* trim whitespace around cell content
 - [ ] Add function to validate field count matches headers
 - [ ] Add basic string field parsing
   - [ ] Ensure string field parsing preserves leading/trailing whitespace within cell pipes
