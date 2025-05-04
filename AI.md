@@ -131,4 +131,10 @@ Initial setup complete. Starting parser implementation.
     - Added `description-line-p` to `src/parser.lisp`.
     - Updated `parse-scsd` stub to demonstrate usage.
 - Task "Add function to detect description lines (not starting with # or |)" completed. Tests pass.
-- Starting next task: "Add function to collect description lines until table or EOF". Will update `parse-scsd`.
+- Task: "Add function to collect description lines until table or EOF".
+    - Refactored `parse-scsd` slightly to track `current-index`.
+    - Updated description processing loop in `parse-scsd` to collect lines using `description-line-p` and advance `current-index`.
+    - Added `table-title-line-p` predicate (needed later).
+    - Fixed compilation error with DECLARE placement.
+- Task "Add function to collect description lines until table or EOF" completed. Tests pass.
+- Starting next task: "Add function to properly join description lines". Will add to `src/parser.lisp` (or maybe `utils.lisp`).
