@@ -92,4 +92,13 @@ Initial setup complete. Starting parser implementation.
     - Exported new functions from `#:scsd/utils`.
     - Fixed compilation error caused by escaped quote in `string-trim`.
 - Task "Add utilities for trimming whitespace and basic string manipulation" completed. Tests pass.
-- Starting next task: "Add simple test file with just a database name". Will create file in `tests/data/`.
+- Task: "Add simple test file with just a database name".
+    - Created `tests/data/` directory.
+    - Created `tests/data/minimal_db.scsd`.
+- Task "Add simple test file with just a database name" completed.
+- Starting next task: "Add tests for basic file reading".
+    - Added `test-data-path` helper to `tests/main.lisp`.
+    - Added `read-lines-utility` test to `tests/main.lisp`.
+    - Updated `:use` clause in `#:scsd-test` package definition.
+- Task "Add tests for basic file reading" completed. Tests pass.
+- Starting next task: "Add function to detect if line starts with single hash". Will add to `src/parser.lisp`.
