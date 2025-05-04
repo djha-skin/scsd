@@ -106,4 +106,8 @@ Initial setup complete. Starting parser implementation.
     - Added `database-title-line-p` to `src/parser.lisp`.
     - Updated `parse-scsd` stub to use `read-lines` and `database-title-line-p`.
 - Task "Add function to detect if line starts with single hash" completed. Tests pass.
-- Starting next task: "Add function to extract database name from title line". Will add `extract-database-name` to `src/parser.lisp`.
+- Task: "Add function to extract database name from title line".
+    - Added `extract-database-name` to `src/parser.lisp`.
+    - Updated `parse-scsd` stub to call extractor.
+- Task "Add function to extract database name from title line" completed. Tests pass.
+- Starting next task: "Add error handling for missing database name". Will modify `parse-scsd`.

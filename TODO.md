@@ -1,7 +1,7 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add function to extract database name from title line
+- [ ] Add error handling for missing database name
 
 ## Blocked
 None currently.
@@ -21,6 +21,7 @@ None currently.
 - [X] Add simple test file with just a database name
 - [X] Add tests for basic file reading
 - [X] Add function to detect if line starts with single hash
+- [X] Add function to extract database name from title line
 
 ## Backlog
 
@@ -31,7 +32,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 2: Database Name
-- [ ] Add error handling for missing database name
 - [ ] Add error handling for malformed database title line
 - [ ] Add tests for database name parsing
   - [ ] Test valid names
