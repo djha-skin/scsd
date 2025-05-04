@@ -209,4 +209,7 @@ Initial setup complete. Starting parser implementation.
     - Added loop to check `trimmed-types` against valid markers (`member ... :test #'string=`).
     - Signal `malformed-typespec-error` if invalid marker found.
 - Task "Add function to validate type markers" completed. Tests pass.
-- Starting next task: "Add function to store column types".
+- Task: "Add function to store column types".
+    - Updated parser to assign validated `trimmed-types` to local variable `column-types`.
+- Task "Add function to store column types" completed. Tests pass.
+- Starting next task: "Add tests for type specification parsing".
