@@ -154,4 +154,9 @@ Initial setup complete. Starting parser implementation.
     - Added `extract-table-name` to `src/parser.lisp`.
     - Updated `parse-scsd` stub to loop through lines after description, detect table titles, and call extractor.
 - Task "Add function to extract table name" completed. Tests pass.
-- Starting next task: "Add validation for table name format". Will add error condition and update parser loop.
+- Task: "Add validation for table name format".
+    - Defined `malformed-table-title-error` condition in `src/conditions.lisp`.
+    - Updated `parse-scsd` table loop to signal error if extracted table name is empty.
+    - Fixed `declare` placement error during compilation.
+- Task "Add validation for table name format" completed. Tests pass.
+- Starting next task: "Add tests for table name parsing".

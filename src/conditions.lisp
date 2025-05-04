@@ -5,7 +5,8 @@
   (:export #:scsd-parse-error
            #:line-number
            #:missing-database-title-error
-           #:malformed-database-title-error ; Export new condition
+           #:malformed-database-title-error
+           #:malformed-table-title-error ; Export new condition
            ))
 
 (in-package #:scsd/conditions)
@@ -28,8 +29,16 @@
 (define-condition malformed-database-title-error (scsd-parse-error)
   ((title-line :initarg :title-line :reader title-line)) ; Store the problematic line
   (:report (lambda (condition stream)
-             (format stream "Malformed Database Title: Title line found, but database name is empty or invalid. Line ~A: ~S" ; Changed final ~A to ~S
+             (format stream "Malformed Database Title: Title line found, but database name is empty or invalid. Line ~A: ~S"
                      (line-number condition)
                      (title-line condition))))
   (:default-initargs :format-control "Malformed Database Title"))
+
+(define-condition malformed-table-title-error (scsd-parse-error)
+  ((title-line :initarg :title-line :reader title-line)) ; Store the problematic line
+  (:report (lambda (condition stream)
+             (format stream "Malformed Table Title: Title line found, but table name is empty or invalid. Line ~A: ~S"
+                     (line-number condition)
+                     (title-line condition))))
+  (:default-initargs :format-control "Malformed Table Title"))
 
