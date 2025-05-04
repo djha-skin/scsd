@@ -1,7 +1,7 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add function to detect description lines (not starting with # or |)
+- [ ] Add function to collect description lines until table or EOF
 
 ## Blocked
 None currently.
@@ -29,6 +29,7 @@ None currently.
   - [X] Test missing hash
   - [X] Test empty name
   - [X] Test malformed lines
+- [X] Add function to detect description lines (not starting with # or |)
 
 ## Backlog
 
@@ -42,7 +43,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 3: Database Description
-- [ ] Add function to collect description lines until table or EOF
 - [ ] Add function to properly join description lines
 - [ ] Add tests for description parsing
   - [ ] Test single line description

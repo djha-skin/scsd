@@ -8,6 +8,14 @@
   "Checks if a line starts with '# ' signifying a database title."
   (string-starts-with-p line "# "))
 
+(defun description-line-p (line)
+  "Checks if a line is potentially part of a database or table description.
+   It should not start with '#' or '|' (or be purely whitespace)."
+  (let ((trimmed-line (trim-whitespace line)))
+    (and (> (length trimmed-line) 0) ; Not empty or just whitespace
+         (not (char= (char trimmed-line 0) #\#))
+         (not (char= (char trimmed-line 0) #\|)))))
+
 ;;; Data Extractors
 
 (defun extract-database-name (title-line)
@@ -32,18 +40,24 @@ Assumes line starts with '# '. Trims whitespace from the extracted name."
 
     ;; Step 4: Extract and validate name
     (let ((db-name (extract-database-name title-line)))
-      (declare (ignorable db-name)) ; Moved declare to the top of the LET block
-      ;; Check if name is empty after trimming
+      (declare (ignorable db-name))
       (when (string= db-name "")
         (error 'malformed-database-title-error
-               :line-number (when title-line-index (1+ title-line-index)) ; 1-based line number
-               :title-line title-line))
+               :line-number (when title-line-index (1+ title-line-index))
+               :title-line title-line)))
 
-      ;; TODO: Store db-name
-      )
+    ;; Step 5: Process description (Next tasks)
+    (let* ((start-index (if title-line-index (1+ title-line-index) 0)) ; Start looking after title
+           (description-lines (loop :for line :in (nthcdr start-index lines)
+                                     :while (description-line-p line)
+                                     :collect line)))
+        (declare (ignorable description-lines))
+         ;; TODO: Store description
+         )
 
-    ;; ... more steps: description, tables...
+    ;; ... more steps: tables...
 
     ;; Remove placeholder warning eventually
     (warn "SCSD parsing incomplete.")
     nil)) ; Return nil for now
+

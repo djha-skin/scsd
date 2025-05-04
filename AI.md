@@ -127,4 +127,8 @@ Initial setup complete. Starting parser implementation.
     - Fixed package name conflict between `scsd:parse-scsd` and imported `scsd/parser:parse-scsd` by removing `:use #:scsd` from test package.
 - Task "Add tests for database name parsing" completed. Tests pass.
 - Starting Parser Implementation Phase 3: Database Description.
-- Starting next task: "Add function to detect description lines (not starting with # or |)". Will add to `src/parser.lisp`.
+- Task: "Add function to detect description lines (not starting with # or |)".
+    - Added `description-line-p` to `src/parser.lisp`.
+    - Updated `parse-scsd` stub to demonstrate usage.
+- Task "Add function to detect description lines (not starting with # or |)" completed. Tests pass.
+- Starting next task: "Add function to collect description lines until table or EOF". Will update `parse-scsd`.
