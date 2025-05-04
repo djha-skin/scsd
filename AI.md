@@ -217,4 +217,7 @@ Initial setup complete. Starting parser implementation.
     - Added test case `parse-scsd-typespec-errors` covering valid types, whitespace, missing line, mismatched count, and invalid marker errors.
 - Task "Add tests for type specification parsing" completed. Tests pass.
 - Starting Parser Implementation Phase 8: Basic Data Rows.
-- Starting next task: "Add function to detect data rows".
+- Task: "Add function to detect data rows".
+    - Updated parser loop to use `pipe-table-line-p` to identify potential data rows after the typespec line.
+- Task "Add function to detect data rows" completed. Tests pass.
+- Starting next task: "Add function to split row into fields".
