@@ -9,7 +9,8 @@
   :components ((:file "package") ; Load main package definition first
                (:module "src"     ; Define src module
                 :serial t
-                :components ((:file "utils")          ; Load utils first
+                :components ((:file "utils")          ; Load utils
+                             (:file "conditions")     ; Load conditions BEFORE parser package
                              (:file "package-parser") ; Load parser package def
                              (:file "parser")         ; Load parser logic
                              ;; Add other source files here later

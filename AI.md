@@ -110,4 +110,10 @@ Initial setup complete. Starting parser implementation.
     - Added `extract-database-name` to `src/parser.lisp`.
     - Updated `parse-scsd` stub to call extractor.
 - Task "Add function to extract database name from title line" completed. Tests pass.
-- Starting next task: "Add error handling for missing database name". Will modify `parse-scsd`.
+- Task: "Add error handling for missing database name".
+    - Created `src/conditions.lisp` defining `scsd-parse-error` and `missing-database-title-error`.
+    - Updated `scsd.asd` to load conditions file.
+    - Updated `#:scsd/parser` package to use conditions.
+    - Modified `parse-scsd` to signal `missing-database-title-error` if no title line is found.
+- Task "Add error handling for missing database name" completed. Tests pass.
+- Starting next task: "Add error handling for malformed database title line". Will define new condition and update parser.
