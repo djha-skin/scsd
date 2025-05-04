@@ -1,11 +1,7 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add tests for type specification parsing
-  - [ ] Test each valid type
-  - [ ] Test invalid type markers
-  - [ ] Test mismatched column counts
-  - [ ] Test type parsing with extra whitespace (e.g., `| - |`, `| :- |`)
+- [ ] Add function to detect data rows
 
 ## Blocked
 None currently.
@@ -70,6 +66,11 @@ None currently.
   - [X] Validate number type (-:)
   - [X] Validate boolean type (:-:)
 - [X] Add function to store column types
+- [X] Add tests for type specification parsing
+  - [X] Test each valid type
+  - [X] Test invalid type markers
+  - [X] Test mismatched column counts
+  - [X] Test type parsing with extra whitespace (e.g., `| - |`, `| :- |`)
 
 ## Backlog
 
@@ -98,7 +99,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 8: Basic Data Rows
-- [ ] Add function to detect data rows
 - [ ] Add function to split row into fields
   - [ ] Ensure splitting does *not* trim whitespace around cell content
 - [ ] Add function to validate field count matches headers

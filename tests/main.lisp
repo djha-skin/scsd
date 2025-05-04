@@ -173,18 +173,32 @@ Line 4 after blank.")))
 
 (test parse-scsd-header-errors
   "Test error handling for header issues."
-  ;; Malformed header (empty column name)
   (signals malformed-header-error
     (parse-scsd (test-data-path "header_empty_col")))
-  ;; Missing header (EOF after description)
-  (signals missing-header-error ; Changed from error
+  (signals missing-header-error
     (parse-scsd (test-data-path "header_missing")))
-  ;; Invalid header line format (doesn't start/end with pipe) - causes missing typespec later
-  (signals missing-typespec-error ; Changed from finishes
+  (signals missing-typespec-error
     (parse-scsd (test-data-path "header_invalid")))
-  ;; Valid header (with whitespace)
   (finishes (parse-scsd (test-data-path "header_whitespace_cols"))))
 
+;; Tests for Type Specification Parsing (Phase 7)
+(test parse-scsd-typespec-errors
+  "Test error handling for type specification issues."
+  ;; Valid cases
+  (finishes (parse-scsd (test-data-path "types_valid")))
+  (finishes (parse-scsd (test-data-path "types_whitespace")))
+
+  ;; Missing typespec line
+  (signals missing-typespec-error
+    (parse-scsd (test-data-path "types_missing")))
+
+  ;; Mismatched count between headers and types
+  (signals mismatched-typespec-error
+    (parse-scsd (test-data-path "types_mismatch_count")))
+
+  ;; Invalid type marker string
+  (signals malformed-typespec-error
+    (parse-scsd (test-data-path "types_invalid_marker"))))
 
 ;; Placeholder sanity check (can be removed later)
 (test sanity-check
