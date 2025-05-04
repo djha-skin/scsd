@@ -2,9 +2,10 @@
 
 (defpackage #:scsd/conditions
   (:use #:cl)
-  (:export #:scsd-parse-error          ; Base condition for all parse errors
-           #:line-number              ; Reader for line number slot
-           #:missing-database-title-error ; Specific error
+  (:export #:scsd-parse-error
+           #:line-number
+           #:missing-database-title-error
+           #:malformed-database-title-error ; Export new condition
            ))
 
 (in-package #:scsd/conditions)
@@ -23,4 +24,12 @@
              (format stream "Missing Database Title: SCSD document must start with a database title line (e.g., '# Database Name').~@[ Error near line ~A.~]"
                      (line-number condition))))
   (:default-initargs :format-control "Missing Database Title"))
+
+(define-condition malformed-database-title-error (scsd-parse-error)
+  ((title-line :initarg :title-line :reader title-line)) ; Store the problematic line
+  (:report (lambda (condition stream)
+             (format stream "Malformed Database Title: Title line found, but database name is empty or invalid. Line ~A: ~S" ; Changed final ~A to ~S
+                     (line-number condition)
+                     (title-line condition))))
+  (:default-initargs :format-control "Malformed Database Title"))
 

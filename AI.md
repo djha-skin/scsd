@@ -116,4 +116,9 @@ Initial setup complete. Starting parser implementation.
     - Updated `#:scsd/parser` package to use conditions.
     - Modified `parse-scsd` to signal `missing-database-title-error` if no title line is found.
 - Task "Add error handling for missing database name" completed. Tests pass.
-- Starting next task: "Add error handling for malformed database title line". Will define new condition and update parser.
+- Task: "Add error handling for malformed database title line".
+    - Defined `malformed-database-title-error` condition in `src/conditions.lisp`.
+    - Updated `parse-scsd` to signal `malformed-database-title-error` if extracted name is empty.
+    - Fixed compilation issues (FORMAT string in condition, DECLARE placement in parser).
+- Task "Add error handling for malformed database title line" completed. Tests pass.
+- Starting next task: "Add tests for database name parsing". Will add tests to `tests/main.lisp`.

@@ -1,7 +1,11 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add error handling for malformed database title line
+- [ ] Add tests for database name parsing
+  - [ ] Test valid names
+  - [ ] Test missing hash
+  - [ ] Test empty name
+  - [ ] Test malformed lines
 
 ## Blocked
 None currently.
@@ -23,6 +27,7 @@ None currently.
 - [X] Add function to detect if line starts with single hash
 - [X] Add function to extract database name from title line
 - [X] Add error handling for missing database name
+- [X] Add error handling for malformed database title line
 
 ## Backlog
 
@@ -33,11 +38,7 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 2: Database Name
-- [ ] Add tests for database name parsing
-  - [ ] Test valid names
-  - [ ] Test missing hash
-  - [ ] Test empty name
-  - [ ] Test malformed lines
+*None remaining*
 
 ### Parser Implementation - Phase 3: Database Description
 - [ ] Add function to detect description lines (not starting with # or |)

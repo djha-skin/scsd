@@ -28,14 +28,17 @@ Assumes line starts with '# '. Trims whitespace from the extracted name."
 
     ;; Step 3: Validate title line presence
     (unless title-line
-      ;; Signal error if no title line found. We don't have an exact line number
-      ;; if it's completely missing, maybe signal error without line num? Or search up to first non-comment/blank?
-      ;; For now, signal without specific line number if totally missing.
       (error 'missing-database-title-error))
 
-    ;; Step 4: Extract name (if found)
+    ;; Step 4: Extract and validate name
     (let ((db-name (extract-database-name title-line)))
-      (declare (ignorable db-name)) ; Mark as used for now
+      (declare (ignorable db-name)) ; Moved declare to the top of the LET block
+      ;; Check if name is empty after trimming
+      (when (string= db-name "")
+        (error 'malformed-database-title-error
+               :line-number (when title-line-index (1+ title-line-index)) ; 1-based line number
+               :title-line title-line))
+
       ;; TODO: Store db-name
       )
 
