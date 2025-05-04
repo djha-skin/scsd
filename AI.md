@@ -96,9 +96,14 @@ Initial setup complete. Starting parser implementation.
     - Created `tests/data/` directory.
     - Created `tests/data/minimal_db.scsd`.
 - Task "Add simple test file with just a database name" completed.
-- Starting next task: "Add tests for basic file reading".
+- Task: "Add tests for basic file reading".
     - Added `test-data-path` helper to `tests/main.lisp`.
     - Added `read-lines-utility` test to `tests/main.lisp`.
     - Updated `:use` clause in `#:scsd-test` package definition.
 - Task "Add tests for basic file reading" completed. Tests pass.
-- Starting next task: "Add function to detect if line starts with single hash". Will add to `src/parser.lisp`.
+- Starting Parser Implementation Phase 2: Database Name.
+- Task: "Add function to detect if line starts with single hash".
+    - Added `database-title-line-p` to `src/parser.lisp`.
+    - Updated `parse-scsd` stub to use `read-lines` and `database-title-line-p`.
+- Task "Add function to detect if line starts with single hash" completed. Tests pass.
+- Starting next task: "Add function to extract database name from title line". Will add `extract-database-name` to `src/parser.lisp`.
