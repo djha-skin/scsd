@@ -6,6 +6,7 @@
   :license "Specify license here" ; Placeholder - update later if needed
   :version "0.0.1"
   :serial t
+  :depends-on (#:str) ; <<<<< ADDED DEPENDENCY
   :components ((:file "package") ; Load main package definition first
                (:module "src"     ; Define src module
                 :serial t

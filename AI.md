@@ -181,8 +181,10 @@ Initial setup complete. Starting parser implementation.
     - Updated parser loop to check for header line using the predicate.
 - Task "Add function to detect header line (starts with |)" completed. Tests pass.
 - Task: "Add function to split header line into column names".
-    - Added `split-pipe-table-line` to `src/parser.lisp`.
+    - Added `split-pipe-table-line` to `src/parser.lisp` (using `str:split`).
+    - Added `:str` dependency to `scsd.asd`.
+    - Imported `str:split` into `#:scsd/parser` package.
+    - Updated `scripts/test.ros` to `ql:quickload :str`.
     - Updated parser loop to call splitter.
-    - Fixed bug in `split-pipe-table-line` related to end condition.
 - Task "Add function to split header line into column names" completed. Tests pass.
 - Starting next task: "Add function to validate column name format".

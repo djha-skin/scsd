@@ -6,7 +6,8 @@
            #:line-number
            #:missing-database-title-error
            #:malformed-database-title-error
-           #:malformed-table-title-error ; Export new condition
+           #:malformed-table-title-error
+           #:malformed-header-error ; Export new
            ))
 
 (in-package #:scsd/conditions)
@@ -41,4 +42,14 @@
                      (line-number condition)
                      (title-line condition))))
   (:default-initargs :format-control "Malformed Table Title"))
+
+(define-condition malformed-header-error (scsd-parse-error)
+  ((header-line :initarg :header-line :reader header-line)
+   (reason :initarg :reason :reader reason))
+  (:report (lambda (condition stream)
+             (format stream "Malformed Header Line: ~A. Line ~A: ~S"
+                     (reason condition)
+                     (line-number condition)
+                     (header-line condition))))
+  (:default-initargs :format-control "Malformed Header Line"))
 

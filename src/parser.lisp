@@ -43,14 +43,10 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
 (defun split-pipe-table-line (line)
   "Splits a pipe-table line (header, type, data) into a list of cell strings.
    Assumes the line starts and ends with '|'. Preserves internal whitespace."
-  (loop :with cells := nil
-        :with line-len := (length line)
-        :with start := 1 ; Skip initial '|'
-        :for end := (position #\| line :start start) ; Start search from current position
-        :while (and end (< end (1- line-len))) ; Stop if pipe found is the last char
-        :do (push (subseq line start end) cells)
-            (setf start (1+ end)) ; Move past the found '|'
-        :finally (return (nreverse cells))))
+  ;; Remove leading and trailing pipes, then split by pipe.
+  ;; str:split with :omit-nulls nil preserves empty strings between pipes (e.g., ||)
+  (let ((inner-content (subseq line 1 (1- (length line)))))
+    (str:split #\| inner-content :omit-nulls nil)))
 
 ;;; Main parsing logic (placeholder)
 
@@ -115,7 +111,12 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
                (incf current-index) ; Consume header line
                (let ((column-names (split-pipe-table-line header-line)))
                  (declare (ignorable column-names))
-                 ;; TODO: Validate column names (next task)
+                 ;; Validate column names
+                 (when (or (null column-names) (member "" column-names :test #'string=))
+                   (error 'malformed-header-error
+                          :reason "Header contains empty column names (e.g., '||' or starts/ends with '||')"
+                          :line-number (1- current-index) ; Line number of the header line
+                          :header-line header-line))
                  ;; TODO: Store column names
                  ))
              ;; TODO: Process types, rows (starting at current-index)

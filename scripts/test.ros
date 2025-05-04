@@ -7,17 +7,19 @@ exec ros -Q -- $0 "$@"
 ;;; This script runs the test suite for the SCSD library.
 
 (require "asdf")
+(ros:quicklisp) ; Ensure Quicklisp is loaded
+(ql:quickload :str) ; Explicitly load dependency
 
 ;; Ensure ASDF knows where to find .asd files in the current project directory
 (pushnew *default-pathname-defaults* asdf:*central-registry* :test #'equal)
 
 ;; Load the test system
-(asdf:load-system :scsd-test :force t) ; Changed system name
+(asdf:load-system :scsd-test :force t)
 
 ;; Run the tests defined in the test system
-(let ((results (asdf:test-system :scsd-test))) ; Changed system name
+(let ((results (asdf:test-system :scsd-test)))
   (unless results
     (format *error-output* "Tests failed!~%")
-    (uiop:quit 1))) ; Exit with non-zero status on failure
+    (uiop:quit 1)))
 
-(uiop:quit 0) ; Exit with zero status on success
+(uiop:quit 0)
