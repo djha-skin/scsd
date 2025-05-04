@@ -88,8 +88,8 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
            (incf current-index) ; Consume title line
            (let* ((table-name (extract-table-name line))
                   (table-description nil)
-                  (column-names nil)) ; Add variable for column names
-             (declare (ignorable table-name table-description column-names)) ; Update declare
+                  (column-names nil))
+             (declare (ignorable table-name table-description column-names))
              ;; Validate table name
              (when (string= table-name "")
                (error 'malformed-table-title-error
@@ -105,10 +105,10 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
 
              ;; Expect Header line
              (let ((header-line (when (< current-index (length lines)) (nth current-index lines))))
-               ;; (declare (ignorable header-line)) ; No longer needed here
                (unless (and header-line (pipe-table-line-p header-line))
-                 (error "Missing or invalid table header line after description for table '~A' near line ~A"
-                        table-name (1+ current-index)))
+                 (error 'missing-header-error
+                        :table-name table-name
+                        :line-number (1+ current-index)))
                (incf current-index) ; Consume header line
                (let ((split-names (split-pipe-table-line header-line)))
                  ;; Validate column names
@@ -117,16 +117,39 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
                           :reason "Header contains empty column names (e.g., '||' or starts/ends with '||')"
                           :line-number (1- current-index) ; Line number of the header line
                           :header-line header-line))
-                 ;; Store column names in the outer LET* scope
                  (setf column-names split-names)))
-             ;; TODO: Process types, rows (starting at current-index)
-             (format t "~&Parsed table '~A' with headers: ~S~%" table-name column-names) ; Temporary print
+
+             ;; Expect Type line
+             (let* ((typespec-line (when (< current-index (length lines)) (nth current-index lines)))
+                    (typespec-line-num (1+ current-index)))
+               (unless (and typespec-line (pipe-table-line-p typespec-line))
+                 (error 'missing-typespec-error
+                        :table-name table-name
+                        :line-number typespec-line-num))
+               (incf current-index) ; Consume typespec line
+               (let* ((raw-types (split-pipe-table-line typespec-line))
+                      (trimmed-types (mapcar #'trim-whitespace raw-types)))
+                 (declare (ignorable trimmed-types))
+                 ;; Validate count
+                 (unless (= (length trimmed-types) (length column-names))
+                   (error 'mismatched-typespec-error
+                          :header-count (length column-names)
+                          :typespec-count (length trimmed-types)
+                          :line-number typespec-line-num
+                          :typespec-line typespec-line))
+                 ;; TODO: Validate actual type markers (next task)
+                 ;; TODO: Store column types
+                 ;; (format t "~&Parsed types for table '~A': ~S~%" table-name trimmed-types) ; Removed
+                 ))
+
+             ;; TODO: Process rows (starting at current-index)
+             ;; (format t "~&Parsed table '~A' with headers: ~S~%" table-name column-names) ; Removed
              )) ; End LET* for current table
           ((string= (trim-whitespace line) "")
            (incf current-index)) ; Skip blank lines between elements
           (t
            ;; Found unexpected content
-           (warn "Unexpected content found starting line ~A: ~S" line-num line)
+           ;; (warn "Unexpected content found starting line ~A: ~S" line-num line) ; Removed warning
            (return))))) ; Stop processing for now
 
     ;; Placeholder return

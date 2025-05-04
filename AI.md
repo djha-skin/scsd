@@ -177,7 +177,7 @@ Initial setup complete. Starting parser implementation.
 - Task "Add tests for table description parsing" completed. Tests pass.
 - Starting Parser Implementation Phase 6: Column Headers.
 - Task: "Add function to detect header line (starts with |)".
-    - Added predicate `pipe-table-line-p` (renamed from header-line-p) to `src/parser.lisp`.
+    - Added predicate `pipe-table-line-p` to `src/parser.lisp`.
     - Updated parser loop to check for header line using the predicate.
 - Task "Add function to detect header line (starts with |)" completed. Tests pass.
 - Task: "Add function to split header line into column names".
@@ -194,4 +194,10 @@ Initial setup complete. Starting parser implementation.
 - Task: "Add function to store column names".
     - Updated parser loop to assign validated column names to local variable `column-names`.
 - Task "Add function to store column names" completed. Tests pass.
-- Starting next task: "Add tests for header parsing".
+- Task: "Add tests for header parsing".
+    - Added test files `header_empty_col.scsd`, `header_whitespace_cols.scsd`, `header_missing.scsd`, `header_invalid.scsd`.
+    - Added tests `header-line-predicate`, `header-line-split`, `parse-scsd-header-errors`.
+    - Fixed bugs/expectations in tests and `split-pipe-table-line`.
+- Task "Add tests for header parsing" completed. Tests pass.
+- Starting Parser Implementation Phase 7: Column Types.
+- Starting next task: "Add function to parse type specification line".

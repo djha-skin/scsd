@@ -7,8 +7,10 @@
                 #:database-title-line-p
                 #:extract-database-name
                 #:description-line-p
-                #:table-title-line-p ; Import new
-                #:extract-table-name ; Import new
+                #:table-title-line-p
+                #:extract-table-name
+                #:pipe-table-line-p
+                #:split-pipe-table-line
                 #:parse-scsd
                 ))
 
@@ -30,9 +32,9 @@
   "Test the read-lines utility function."
   (let ((lines (read-lines (test-data-path "minimal_db"))))
     (is (listp lines))
-    (is (= (length lines) 4)) ; Expecting 4 lines based on the file content
+    (is (= (length lines) 4))
     (is (string= (first lines) "# Minimal DB Name"))
-    (is (string= (second lines) "")) ; Blank line
+    (is (string= (second lines) ""))
     (is (string= (third lines) "This database only has a name and description."))
     (is (string= (fourth lines) "No tables here."))))
 
@@ -43,8 +45,8 @@
   (is-true (database-title-line-p "# Another Name "))
   (is-true (database-title-line-p "# name-with-symbols_123"))
   (is-false (database-title-line-p " # Not a title"))
-  (is-false (database-title-line-p "#NotATitle")) ; Missing space
-  (is-false (database-title-line-p "## Not a DB title")) ; H2
+  (is-false (database-title-line-p "#NotATitle"))
+  (is-false (database-title-line-p "## Not a DB title"))
   (is-false (database-title-line-p "")))
 
 (test database-name-extraction
@@ -52,11 +54,9 @@
   (is (string= (extract-database-name "# DB Name") "DB Name"))
   (is (string= (extract-database-name "# Another Name ") "Another Name"))
   (is (string= (extract-database-name "# name-with-symbols_123 ") "name-with-symbols_123")))
-  ;; Malformed case (empty name) is handled by parse-scsd error, not directly by extractor
 
 (test parse-scsd-db-name-errors
   "Test error handling for missing or malformed DB names in parse-scsd."
-  ;; Test missing title error
   (signals missing-database-title-error
     (parse-scsd "Just some text
 No title here"))
@@ -64,14 +64,10 @@ No title here"))
     (parse-scsd "## Not a DB title"))
   (signals missing-database-title-error
     (parse-scsd ""))
-
-  ;; Test malformed title error (empty name)
   (signals malformed-database-title-error
-    (parse-scsd "# ")) ; Title marker but empty name
+    (parse-scsd "# "))
   (signals malformed-database-title-error
-    (parse-scsd "#    ")) ; Title marker but only whitespace
-
-  ;; Test valid case does NOT signal these errors
+    (parse-scsd "#    "))
   (finishes (parse-scsd "# Valid Name")))
 
 ;; Tests for Database Description Parsing (Phase 3)
@@ -82,16 +78,14 @@ No title here"))
   (is-true (description-line-p " Ends with space. "))
   (is-true (description-line-p "Contains # hash and | pipe"))
   (is-false (description-line-p ""))
-  (is-false (description-line-p "   ")) ; Whitespace only
+  (is-false (description-line-p "   "))
   (is-false (description-line-p "# Starts with hash"))
   (is-false (description-line-p " # Starts with hash after space"))
   (is-false (description-line-p "| Starts with pipe"))
   (is-false (description-line-p " | Starts with pipe after space")))
 
-(test parse-scsd-db-description ; Placeholder - Need parse-scsd to return description
+(test parse-scsd-db-description
     "Test database description collection and joining."
-    ;; These tests are placeholders until parse-scsd returns the description
-    ;; Need to modify parse-scsd return value or create a helper for testing
     (skip "parse-scsd does not yet return parsed description")
     #|
     (is (string= (get-db-description (parse-scsd (test-data-path "db_no_desc"))) nil))
@@ -115,9 +109,9 @@ Still part of it."))
   (is-true (table-title-line-p "## Another Name "))
   (is-true (table-title-line-p "## name-with-symbols_123"))
   (is-false (table-title-line-p " ## Not a title"))
-  (is-false (table-title-line-p "##NotATitle")) ; Missing space
-  (is-false (table-title-line-p "# Not a table title")) ; H1
-  (is-false (table-title-line-p "### Not a table title")) ; H3
+  (is-false (table-title-line-p "##NotATitle"))
+  (is-false (table-title-line-p "# Not a table title"))
+  (is-false (table-title-line-p "### Not a table title"))
   (is-false (table-title-line-p "")))
 
 (test table-name-extraction
@@ -125,28 +119,19 @@ Still part of it."))
   (is (string= (extract-table-name "## Table Name") "Table Name"))
   (is (string= (extract-table-name "## Another Name ") "Another Name"))
   (is (string= (extract-table-name "## name-with-symbols_123 ") "name-with-symbols_123")))
-  ;; Malformed case (empty name) is handled by parse-scsd error
 
 (test parse-scsd-table-name-errors
   "Test error handling for missing or malformed table names."
-  ;; Malformed table name (empty name after ##<space>)
   (signals malformed-table-title-error
-    (parse-scsd (format nil "# DB Name~%## ~%| C |~%| - |"))) ; Use format to create string input
-
-  ;; Invalid marker (## without space) - should NOT be seen as a table title
-  ;; Currently results in "Unexpected content" warning, should finish parsing before tables.
-  (finishes (parse-scsd (test-data-path "db_malformed_table"))) ; Changed expectation
-
-  ;; Invalid marker (###) - should NOT be seen as a table title
+    (parse-scsd (format nil "# DB Name~%## ~%| C |~%| - |")))
+  (finishes (parse-scsd (test-data-path "db_malformed_table")))
   (finishes (parse-scsd (test-data-path "db_invalid_table_marker")))
-
-  ;; Valid cases (should finish without table name errors)
   (finishes (parse-scsd (test-data-path "db_no_tables")))
   (finishes (parse-scsd (test-data-path "db_single_table")))
   (finishes (parse-scsd (test-data-path "db_multiple_tables"))))
 
 ;; Tests for Table Description Parsing (Phase 5)
-(test parse-scsd-table-description ; Placeholder - Need parse-scsd to return tables/descriptions
+(test parse-scsd-table-description
   "Test table description collection and joining."
   (skip "parse-scsd does not yet return parsed tables with descriptions")
   #|
@@ -165,6 +150,41 @@ Line 2.
 Line 4 after blank.")))
   |#
   )
+
+;; Tests for Column Header Parsing (Phase 6)
+(test header-line-predicate
+  "Test the pipe-table-line-p predicate (used for headers etc.)."
+  (is-true (pipe-table-line-p "| Header |"))
+  (is-true (pipe-table-line-p "| H1 | H2 |"))
+  (is-true (pipe-table-line-p "||"))
+  (is-false (pipe-table-line-p "| No end pipe"))
+  (is-false (pipe-table-line-p "No start pipe |"))
+  (is-false (pipe-table-line-p "Not a pipe line"))
+  (is-false (pipe-table-line-p "|"))
+  (is-false (pipe-table-line-p "")))
+
+(test header-line-split
+  "Test splitting header lines, preserving whitespace."
+  (is (equal (split-pipe-table-line "| C1 | C2 | C3 |") '(" C1 " " C2 " " C3 ")))
+  (is (equal (split-pipe-table-line "|C1|C2|C3|") '("C1" "C2" "C3")))
+  (is (equal (split-pipe-table-line "| Col A |  Col B  |   Col C   |") '(" Col A " "  Col B  " "   Col C   ")))
+  (is (equal (split-pipe-table-line "| One |") '(" One ")))
+  (is (equal (split-pipe-table-line "|||") '("" ""))))
+
+(test parse-scsd-header-errors
+  "Test error handling for header issues."
+  ;; Malformed header (empty column name)
+  (signals malformed-header-error
+    (parse-scsd (test-data-path "header_empty_col")))
+  ;; Missing header (EOF after description)
+  (signals missing-header-error ; Changed from error
+    (parse-scsd (test-data-path "header_missing")))
+  ;; Invalid header line format (doesn't start/end with pipe) - causes missing typespec later
+  (signals missing-typespec-error ; Changed from finishes
+    (parse-scsd (test-data-path "header_invalid")))
+  ;; Valid header (with whitespace)
+  (finishes (parse-scsd (test-data-path "header_whitespace_cols"))))
+
 
 ;; Placeholder sanity check (can be removed later)
 (test sanity-check

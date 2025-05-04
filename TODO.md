@@ -1,11 +1,11 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add tests for header parsing
-  - [ ] Test basic column names
-  - [ ] Test empty column names
-  - [ ] Test malformed header lines
-  - [ ] Test whitespace handling
+- [ ] Add function to validate type markers
+  - [ ] Validate string type (-)
+  - [ ] Validate keyword type (:-)
+  - [ ] Validate number type (-:)
+  - [ ] Validate boolean type (:-:)
 
 ## Blocked
 None currently.
@@ -57,6 +57,13 @@ None currently.
 - [X] Add function to split header line into column names
 - [X] Add function to validate column name format
 - [X] Add function to store column names
+- [X] Add tests for header parsing
+  - [X] Test basic column names
+  - [X] Test empty column names
+  - [X] Test malformed header lines
+  - [X] Test whitespace handling
+- [X] Add function to parse type specification line
+  - [X] Ensure type marker parsing trims whitespace (e.g., `| - |` vs `|-|`)
 
 ## Backlog
 
@@ -82,13 +89,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 7: Column Types
-- [ ] Add function to parse type specification line
-  - [ ] Ensure type marker parsing trims whitespace (e.g., `| - |` vs `|-|`)
-- [ ] Add function to validate type markers
-  - [ ] Validate string type (-)
-  - [ ] Validate keyword type (:-)
-  - [ ] Validate number type (-:)
-  - [ ] Validate boolean type (:-:)
 - [ ] Add function to store column types
 - [ ] Add tests for type specification parsing
   - [ ] Test each valid type
