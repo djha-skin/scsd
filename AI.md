@@ -137,4 +137,8 @@ Initial setup complete. Starting parser implementation.
     - Added `table-title-line-p` predicate (needed later).
     - Fixed compilation error with DECLARE placement.
 - Task "Add function to collect description lines until table or EOF" completed. Tests pass.
-- Starting next task: "Add function to properly join description lines". Will add to `src/parser.lisp` (or maybe `utils.lisp`).
+- Task: "Add function to properly join description lines".
+    - Added `join-lines` utility function to `src/utils.lisp` and exported it.
+    - Updated `parse-scsd` to use `join-lines` on the collected description lines.
+- Task "Add function to properly join description lines" completed. Tests pass.
+- Starting next task: "Add tests for description parsing". Will add tests to `tests/main.lisp`.

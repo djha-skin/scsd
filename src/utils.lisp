@@ -4,7 +4,8 @@
   (:use #:cl)
   (:export #:read-lines
            #:trim-whitespace
-           #:string-starts-with-p)) ; Export new utilities
+           #:string-starts-with-p
+           #:join-lines)) ; Export new utility
 
 (in-package #:scsd/utils)
 
@@ -32,7 +33,7 @@ Handles CR, LF, and CRLF line endings via READ-LINE, removing the line ending ch
 
 (defun trim-whitespace (str)
   "Removes leading and trailing whitespace (space, tab, newline, return, linefeed, formfeed) from STR."
-  (string-trim '(#\Space #\Tab #\Newline #\Return #\Linefeed #\Page) str)) ; Corrected quote
+  (string-trim '(#\Space #\Tab #\Newline #\Return #\Linefeed #\Page) str))
 
 (defun string-starts-with-p (str prefix)
   "Returns true if STR starts with PREFIX, false otherwise."
@@ -40,3 +41,13 @@ Handles CR, LF, and CRLF line endings via READ-LINE, removing the line ending ch
         (str-len (length str)))
     (and (>= str-len prefix-len)
          (string= str prefix :end1 prefix-len))))
+
+(defun join-lines (lines &optional (separator (string #\Newline)))
+  "Joins a list of LINES into a single string, separated by SEPARATOR (defaulting to newline)."
+  (when lines ; Return nil if input list is empty/nil
+    (with-output-to-string (s)
+      (loop :for line :in lines
+            :for first-p := t :then nil
+            :unless first-p :do (write-string separator s)
+            :do (write-string line s)))))
+

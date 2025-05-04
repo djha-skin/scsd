@@ -36,8 +36,8 @@ Assumes line starts with '# '. Trims whitespace from the extracted name."
   (let* ((lines (read-lines input))
          (current-index 0)
          (db-name nil)
-         (db-description-lines nil))
-    (declare (ignorable db-name db-description-lines current-index)) ; Declare at top of LET* body
+         (db-description nil)) ; Changed from db-description-lines
+    (declare (ignorable db-name db-description current-index)) ; Updated declare
 
     ;; Step 2: Find and process database title
     (let ((title-line-index (position-if #'database-title-line-p lines)))
@@ -53,16 +53,17 @@ Assumes line starts with '# '. Trims whitespace from the extracted name."
         (setf db-name extracted-name)
         (setf current-index (1+ title-line-index)))) ; Advance index past title
 
-    ;; Step 3: Collect database description lines
-    (setf db-description-lines
-          (loop :for line :in (nthcdr current-index lines)
-                :for line-num :from (1+ current-index) ; 1-based for potential errors
-                :while (and line (description-line-p line)) ; Stop if not description line or EOF
-                :do (incf current-index) ; Consume the line
-                :collect line))
+    ;; Step 3: Collect and join database description lines
+    (let ((description-lines
+            (loop :for line :in (nthcdr current-index lines)
+                  :for line-num :from (1+ current-index) ; 1-based for potential errors
+                  :while (and line (description-line-p line)) ; Stop if not description line or EOF
+                  :do (incf current-index) ; Consume the line
+                  :collect line)))
+      (setf db-description (join-lines description-lines))) ; Join collected lines
 
-    ;; ... more steps ...
+    ;; TODO: Find and process tables (starting from current-index)
 
+    ;; Remove placeholder warning eventually
     (warn "SCSD parsing incomplete.")
-    nil))
-
+    nil)) ; Return nil for now
