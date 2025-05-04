@@ -40,6 +40,18 @@ Assumes line starts with '# '. Trims whitespace from the extracted name."
 Assumes line starts with '## '. Trims whitespace from the extracted name."
   (trim-whitespace (subseq title-line 3))) ; Skip "## "
 
+(defun split-pipe-table-line (line)
+  "Splits a pipe-table line (header, type, data) into a list of cell strings.
+   Assumes the line starts and ends with '|'. Preserves internal whitespace."
+  (loop :with cells := nil
+        :with line-len := (length line)
+        :with start := 1 ; Skip initial '|'
+        :for end := (position #\| line :start start) ; Start search from current position
+        :while (and end (< end (1- line-len))) ; Stop if pipe found is the last char
+        :do (push (subseq line start end) cells)
+            (setf start (1+ end)) ; Move past the found '|'
+        :finally (return (nreverse cells))))
+
 ;;; Main parsing logic (placeholder)
 
 (defun parse-scsd (input)
@@ -98,20 +110,20 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
              (let ((header-line (when (< current-index (length lines)) (nth current-index lines))))
                (declare (ignorable header-line))
                (unless (and header-line (pipe-table-line-p header-line))
-                 ;; TODO: Define and signal missing-header-error
                  (error "Missing or invalid table header line after description for table '~A' near line ~A"
                         table-name (1+ current-index)))
                (incf current-index) ; Consume header line
-               ;; TODO: Split header line (next task)
-               )
-
+               (let ((column-names (split-pipe-table-line header-line)))
+                 (declare (ignorable column-names))
+                 ;; TODO: Validate column names (next task)
+                 ;; TODO: Store column names
+                 ))
              ;; TODO: Process types, rows (starting at current-index)
              )) ; End LET* for current table
           ((string= (trim-whitespace line) "")
            (incf current-index)) ; Skip blank lines between elements
           (t
            ;; Found unexpected content
-           ;; TODO: Define and signal error
            (warn "Unexpected content found starting line ~A: ~S" line-num line)
            (return))))) ; Stop processing for now
 
