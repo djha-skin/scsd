@@ -191,4 +191,7 @@ Initial setup complete. Starting parser implementation.
     - Added `malformed-header-error` condition.
     - Updated parser to check for `null` or `""` in split column names.
 - Task "Add function to validate column name format" completed. Tests pass.
-- Starting next task: "Add function to store column names". Will modify parser state.
+- Task: "Add function to store column names".
+    - Updated parser loop to assign validated column names to local variable `column-names`.
+- Task "Add function to store column names" completed. Tests pass.
+- Starting next task: "Add tests for header parsing".

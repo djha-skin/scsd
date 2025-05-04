@@ -117,9 +117,10 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
                           :reason "Header contains empty column names (e.g., '||' or starts/ends with '||')"
                           :line-number (1- current-index) ; Line number of the header line
                           :header-line header-line))
-                 ;; Store column names
+                 ;; Store column names in the outer LET* scope
                  (setf column-names split-names)))
              ;; TODO: Process types, rows (starting at current-index)
+             (format t "~&Parsed table '~A' with headers: ~S~%" table-name column-names) ; Temporary print
              )) ; End LET* for current table
           ((string= (trim-whitespace line) "")
            (incf current-index)) ; Skip blank lines between elements
