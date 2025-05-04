@@ -212,4 +212,9 @@ Initial setup complete. Starting parser implementation.
 - Task: "Add function to store column types".
     - Updated parser to assign validated `trimmed-types` to local variable `column-types`.
 - Task "Add function to store column types" completed. Tests pass.
-- Starting next task: "Add tests for type specification parsing".
+- Task: "Add tests for type specification parsing".
+    - Added test files: `types_valid.scsd`, `types_whitespace.scsd`, `types_invalid_marker.scsd`, `types_mismatch_count.scsd`, `types_missing.scsd`.
+    - Added test case `parse-scsd-typespec-errors` covering valid types, whitespace, missing line, mismatched count, and invalid marker errors.
+- Task "Add tests for type specification parsing" completed. Tests pass.
+- Starting Parser Implementation Phase 8: Basic Data Rows.
+- Starting next task: "Add function to detect data rows".
