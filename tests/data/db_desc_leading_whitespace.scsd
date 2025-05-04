@@ -1,0 +1,7 @@
+# DB Desc Leading Whitespace
+  This description starts with whitespace.
+Still part of it.
+## Table 1
+| ColA |
+| - |
+| Val1 |

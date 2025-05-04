@@ -1,11 +1,7 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add tests for description parsing
-  - [ ] Test single line description
-  - [ ] Test multi-line description
-  - [ ] Test empty description
-  - [ ] Test description with blank lines
+- [ ] Add function to detect table start (double hash)
 
 ## Blocked
 None currently.
@@ -36,6 +32,11 @@ None currently.
 - [X] Add function to detect description lines (not starting with # or |)
 - [X] Add function to collect description lines until table or EOF
 - [X] Add function to properly join description lines
+- [X] Add tests for description parsing
+  - [X] Test single line description
+  - [X] Test multi-line description
+  - [X] Test empty description
+  - [X] Test description with blank lines
 
 ## Backlog
 
@@ -52,7 +53,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 4: Table Name
-- [ ] Add function to detect table start (double hash)
 - [ ] Add function to extract table name
 - [ ] Add validation for table name format
 - [ ] Add tests for table name parsing

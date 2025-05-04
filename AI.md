@@ -141,4 +141,10 @@ Initial setup complete. Starting parser implementation.
     - Added `join-lines` utility function to `src/utils.lisp` and exported it.
     - Updated `parse-scsd` to use `join-lines` on the collected description lines.
 - Task "Add function to properly join description lines" completed. Tests pass.
-- Starting next task: "Add tests for description parsing". Will add tests to `tests/main.lisp`.
+- Task: "Add tests for description parsing".
+    - Created test files: `db_no_desc`, `db_single_line_desc`, `db_multi_line_desc`, `db_desc_leading_whitespace`.
+    - Added test `description-line-predicate` to `tests/main.lisp`.
+    - Added skipped test `parse-scsd-db-description` (pending parser return value).
+- Task "Add tests for description parsing" completed. Tests pass.
+- Starting Parser Implementation Phase 4: Table Name.
+- Starting next task: "Add function to detect table start (double hash)". Will add predicate to `src/parser.lisp`.

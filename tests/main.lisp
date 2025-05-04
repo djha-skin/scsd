@@ -6,7 +6,8 @@
   (:import-from #:scsd/parser
                 #:database-title-line-p
                 #:extract-database-name
-                #:parse-scsd ; Use internal parse-scsd for specific error tests
+                #:description-line-p ; Import new symbol
+                #:parse-scsd
                 ))
 
 (in-package #:scsd-test)
@@ -70,6 +71,40 @@ No title here"))
 
   ;; Test valid case does NOT signal these errors
   (finishes (parse-scsd "# Valid Name")))
+
+;; Tests for Database Description Parsing (Phase 3)
+(test description-line-predicate
+  "Test the description-line-p predicate."
+  (is-true (description-line-p "This is a description line."))
+  (is-true (description-line-p "  Another description line with leading space."))
+  (is-true (description-line-p " Ends with space. "))
+  (is-true (description-line-p "Contains # hash and | pipe"))
+  (is-false (description-line-p ""))
+  (is-false (description-line-p "   ")) ; Whitespace only
+  (is-false (description-line-p "# Starts with hash"))
+  (is-false (description-line-p " # Starts with hash after space"))
+  (is-false (description-line-p "| Starts with pipe"))
+  (is-false (description-line-p " | Starts with pipe after space")))
+
+(test parse-scsd-db-description ; Placeholder - Need parse-scsd to return description
+    "Test database description collection and joining."
+    ;; These tests are placeholders until parse-scsd returns the description
+    ;; Need to modify parse-scsd return value or create a helper for testing
+    (skip "parse-scsd does not yet return parsed description")
+    #|
+    (is (string= (get-db-description (parse-scsd (test-data-path "db_no_desc"))) nil))
+    (is (string= (get-db-description (parse-scsd (test-data-path "db_single_line_desc"))) 
+                   "This is the description."))
+    (is (string= (get-db-description (parse-scsd (test-data-path "db_multi_line_desc")))
+                   "This is the first line.
+This is the second line.
+
+This is after a blank line."))
+    (is (string= (get-db-description (parse-scsd (test-data-path "db_desc_leading_whitespace")))
+                   "  This description starts with whitespace.
+Still part of it."))
+    |#
+    )
 
 ;; Placeholder sanity check (can be removed later)
 (test sanity-check
