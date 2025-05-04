@@ -186,6 +186,7 @@ Initial setup complete. Starting parser implementation.
     - Imported `str:split` into `#:scsd/parser` package.
     - Updated `scripts/test.ros` to `ql:quickload :str`.
     - Updated parser loop to call splitter.
+    - Fixed bug in my own implementation of `split-pipe-table-line` before switching to `str:split`.
 - Task "Add function to split header line into column names" completed. Tests pass.
 - Task: "Add function to validate column name format".
     - Added `malformed-header-error` condition.
@@ -200,4 +201,9 @@ Initial setup complete. Starting parser implementation.
     - Fixed bugs/expectations in tests and `split-pipe-table-line`.
 - Task "Add tests for header parsing" completed. Tests pass.
 - Starting Parser Implementation Phase 7: Column Types.
-- Starting next task: "Add function to parse type specification line".
+- Task: "Add function to parse type specification line".
+    - Updated parser loop to find line after header, check if it's a pipe table line, split, trim, and check count.
+    - Added `missing-typespec-error` and `mismatched-typespec-error` conditions.
+    - Fixed errors during testing (DECLARE placement, test expectations).
+- Task "Add function to parse type specification line" completed. Tests pass.
+- Starting next task: "Add function to validate type markers".
