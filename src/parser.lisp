@@ -88,8 +88,9 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
            (incf current-index) ; Consume title line
            (let* ((table-name (extract-table-name line))
                   (table-description nil)
-                  (column-names nil))
-             (declare (ignorable table-name table-description column-names))
+                  (column-names nil)
+                  (column-types nil)) ; Added variable for types
+             (declare (ignorable table-name table-description column-names column-types)) ; Update declare
              ;; Validate table name
              (when (string= table-name "")
                (error 'malformed-table-title-error
@@ -129,7 +130,6 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
                (incf current-index) ; Consume typespec line
                (let* ((raw-types (split-pipe-table-line typespec-line))
                       (trimmed-types (mapcar #'trim-whitespace raw-types)))
-                 (declare (ignorable trimmed-types))
                  ;; Validate count
                  (unless (= (length trimmed-types) (length column-names))
                    (error 'mismatched-typespec-error
@@ -146,10 +146,12 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
                                                     type-marker (1+ col-index))
                                     :line-number typespec-line-num
                                     :typespec-line typespec-line))
-                 ;; TODO: Store column types (next task)
-                 ))
+                 ;; Store column types
+                 (setf column-types trimmed-types)))
 
              ;; TODO: Process rows (starting at current-index)
+             (format t "~&Parsed table '~A' headers: ~S types: ~S~%" ; Temp print
+                     table-name column-names column-types)
              )) ; End LET* for current table
           ((string= (trim-whitespace line) "")
            (incf current-index)) ; Skip blank lines between elements

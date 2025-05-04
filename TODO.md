@@ -1,7 +1,11 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add function to store column types
+- [ ] Add tests for type specification parsing
+  - [ ] Test each valid type
+  - [ ] Test invalid type markers
+  - [ ] Test mismatched column counts
+  - [ ] Test type parsing with extra whitespace (e.g., `| - |`, `| :- |`)
 
 ## Blocked
 None currently.
@@ -65,6 +69,7 @@ None currently.
   - [X] Validate keyword type (:-)
   - [X] Validate number type (-:)
   - [X] Validate boolean type (:-:)
+- [X] Add function to store column types
 
 ## Backlog
 
@@ -90,11 +95,7 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 7: Column Types
-- [ ] Add tests for type specification parsing
-  - [ ] Test each valid type
-  - [ ] Test invalid type markers
-  - [ ] Test mismatched column counts
-  - [ ] Test type parsing with extra whitespace (e.g., `| - |`, `| :- |`)
+*None remaining*
 
 ### Parser Implementation - Phase 8: Basic Data Rows
 - [ ] Add function to detect data rows

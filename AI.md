@@ -205,4 +205,8 @@ Initial setup complete. Starting parser implementation.
     - Added `missing-typespec-error` and `mismatched-typespec-error` conditions.
     - Fixed errors during testing (DECLARE placement, test expectations).
 - Task "Add function to parse type specification line" completed. Tests pass.
-- Starting next task: "Add function to validate type markers".
+- Task: "Add function to validate type markers".
+    - Added loop to check `trimmed-types` against valid markers (`member ... :test #'string=`).
+    - Signal `malformed-typespec-error` if invalid marker found.
+- Task "Add function to validate type markers" completed. Tests pass.
+- Starting next task: "Add function to store column types".
