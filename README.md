@@ -59,8 +59,6 @@ A *many-to-many* relation between doctors and patients.
 |2|5|1|
 |3|3|2|
 |4|3|1|
-
-
 ```
 
 Should look like this:
@@ -149,57 +147,75 @@ Should look like this:
 
 It's just a subset of markdown as described above. Here is that subset:
 
-
 ### Lines
 
 Everything is line-based. Lines are separated by one carriage return or one
 newline character or one CR followed by one LF. This is called a "line
 separation".
 
-### Comments
+### Preamble
 
-Comments are written as they would have to be in markdown:
-`<!-- Like this -->`. 
+All lines before the first line starting with a single hash followed by a space
+(`# `) is called the _preamble_. It is raw text stored as-is by the parser so
+that when the database is written back out to the file again after modification
+by a program the preamble may be preserved. This preamble allows for editor mode
+lines and "comment"-like things that authors may wish to keep with the database.
 
-### One Document, One Database
+### Database Name
 
-Each document starts with a single hash followed by a space (`# `). What follows
-thereafter is the database name until a line separation is found.
+The first line starting with a single hash followed by a space (`# `) is called
+the _database name line_. What follows after those two characters until the end
+of the line separation is the database name. This corresponds to an ATX Header 1
+line in CommonMark, but is actually storing the database name.
 
-An optional set of lines may be present that do not start with either a pipe or
-a hash character. These lines will be collected as a multi-line string
-comprising the database description.
+A set of zero or more lines present that do not start with either a pipe or
+a hash character are collected as a multi-line string. This
+comprises the _database description_. Like the preamble, it is stored as raw
+text with the database so that when apps read the file, modify the data, and
+write the file back out, the database description is preserved.
 
 A database consists of zero or more tables.
 
 ### Tables
 
-A table has a name, a description, column names within a header, a columns type
-line, and zero or more rows. If there are zero rows, there must still be types
-and headers lines.
+A table has a name, a description, and a pipe-separated table. The first row in
+the table is has the column names. The second row houses the column types in a
+way that displays well in a markdown reader. After that row, there are data
+rows. Ther are zero or more data rows. If there are zero rows, there must still
+be column name and type rows.
+
+Unlike in CommonMark, all pipe-separated lines MUST start with and end with a
+pipe, rather than simply allowing one or the other.
 
 #### Table name
 
-Each table starts with a line starting with two hashes followed by a space (`##
-`). What follows thereafter is the table name until a line separation is found.
+Each table starts with an empty line followed by a line starting with two hashes
+followed by a space (`## `). What follows thereafter is the table name until a
+line separation is found. This corresponds to an ATX Header 1 line in
+CommonMark, but is actually storing the table name.
 
-An optional set of lines may be present that do not start with either a pipe or
-a hash character. These lines will be collected as a multi-line string
-comprising the table description.
+A set of zero or more lines present that do not start with either a pipe or
+a hash character are collected as a multi-line string. This
+comprises the _table description_. Like the preamble, it is stored as raw
+text with the database so that when apps read the file, modify the data, and
+write the file back out, the table description is preserved.
 
-#### Table Header
+#### First Pipe Table Row: Column Names
 
-Thereafter, there MUST be a line starting with a pipe character (`|`). This line
+Thereafter, there MUST be an empty line followed by a line starting with a pipe
+character (`|`). This line
 is a pipe-separated list of column names in the table. Spaces are not trimmed or
-removed; all characters between the pipes are taken literally as the table name.
-The line must end with a pipe character followed by a line separation.
+removed; all characters between the pipes are taken literally as the column
+name of that column.
 
-#### Table Type Line
+#### Second Pipe Table Row: Column Types
 
-The next line is the dash line. It specifies the types that will be in different
-columns. It should start with the pipe character and have just as many
-pipe-separated fields as the table header. Each field MUST be one of the
-following:
+Thereafter, there MUST be a pipe-separated list of column types in the table.
+Types are specified in a specific way which allows the table to be rendered by a
+markdown viewer. This line corresponds to the dash line in normal pipe tables in
+markdown. It should start with the pipe character (`|`) and have just as many
+pipe-separated fields as the row of column names has. Each field MUST be one of
+the following:
 
 * The character `-` as a string indicator. This indicates the column is a
   string.
@@ -212,97 +228,99 @@ following:
 
 * `:-:` means the field contains a boolean value of `true` or `false`.
 
+This is different than normal pipe tables in markdown. Instead of allowing any
+number of dashes in a field in the dash line, SCSD dash line fields must only
+have one dash (`-`). Also in SCSD, colons are not just for alignment; they also
+specify datatype.
+
 As previously stated, each field must be separated by others via the pipe
-character. The line must end with a pipe character just before the line
+character (`|`). The line must end with a pipe character just before the line
 separation.
 
 #### Table cell line
 
 Each subsequent line must start with a pipe. It must contain as many
-pipe-separated fields as the header and table type lines. It must end with a
-pipe before the line separation. Fields in the JSON number columns or JSON
-boolean columns must conform to that spec during parsing. Empty fields are
-always allowed by the spec, and signify a JSON-like null value. 
+pipe-separated fields as the column names row and column types row. It must end
+with a pipe (`|`) before the line separation. Fields in the JSON number columns
+or JSON boolean columns must conform to that spec during parsing. Empty fields
+are always allowed by the spec, and signify a JSON-like null value. 
 
 ### Strings
 
-Strings must not contain non-printables, tabs, or line separation characters.
-They support backslash escaping of any ASCII punctuation character (to be
-conformant with CommonMark), `\a` for alarm, `\b` for backspace, `\f` for form
-feed, `\n` for line feed, `\r` for carriage return, `\v` for vertical tab, `\t`
-for tab, and `\uXXXX` for 16-bit unicode character encoding. In particular,
-dashes, colons, and pipes MUST be escaped. A single unescaped dash (`-`) in the
+Strings must not contain non-printable characters, tab characters (ASCII `HT`
+character), or line separation characters (ASCII `LF` character).
+They support backslash escaping of `\a` for the alarm (ASCII `BEL` character),
+`\b` for backspace (ASCII `DEL` character), `\f` for form
+feed (ASCII `FF` character), `\n` for line feed, `\r` for carriage return, `\v`
+for vertical tab, `\t` for tab, and `\uXXXX` for 16-bit unicode character
+encoding. They also support escaping dashes, colons, and pipes.
+A single unescaped dash (`-`) in the
 table cell lines indicates an empty string. All characters between the pipes of
 the cell are considered part of the string; there is no trimming, whitespace or
-otherwise. From an SQL perspective, all columns (even the first one) are
-considered nullable, at least for the purposes of the serialization format.
+otherwise.
 
 ### Keywords
 
-Keywords are serialized just as strings are, except that they indicate a
-keyword, atom, or symbol. This string "means something".
+Keywords (fields in columns of the keyword or `:-` type) are serialized just as
+strings are, except that they indicate a keyword, atom, or symbol. This string
+"means something". In Common Lisp, they are to be parsed out as keywords.
 
 ### Numbers
 
-Just like JSON numbers.
+Numbers (fields in columns of the number or `-:` type) must follow the same
+specification as and are parsed similarly to JSON numbers.
 
 ### Booleans
 
-Just like JSON booleans.
+Booleans (fields in columns of the boolean or `:-:` type) must be the strings
+"true" or "false".
 
 ## ABNF
 
 ```abnf
 
-cr = %0d
+cr = %0d    ; ASCII CR character
 
-lf = %0a
+lf = %0a    ; ASCII LF character
 
 line-sep = [cr] lf
 
-pipe = %7c
+dash = "-"
+colon = ":"
+hash = "#"
+space = " "
+backslash = %5c ; ASCII backslash (`\`) character
 
-dash = %2d
-
-colon = %3a
-
-hash = %23
-
-space = %20
-
-backslash = %5c
-
-ascii-punct = %21 - %2f
-            / %3a - %40
-            / %5b - %60
+ascii-punct = %21 - %2f ; These are just
+            / %3a - %40 ; all the ASCII punctuation characters
+            / %5b - %60 ; specified in byte hex format
             / %7b - %7e
 
-nonzero-digit = %31 - %39
+nonzero-digit = %31 - %39 ; The unicode characters "1" through "9"
 
-zero = %30
+zero = "0"
 
-digit = zero / nonzero-digit
+digit = "0" / nonzero-digit
 
-point = %2e
+exp = "E" / "e"
 
-exp = %45 ; E
-    / %65 ; e
+integer = "0"
+        / ["-"] nonzero-digit *digit
 
-integer = zero
-        / [dash] nonzero-digit *digit
+number = integer ["." *digit] [exp integer]
 
-number = integer [point *digit] [exp integer]
+hex = %30 - %39 ; "0" - "9"
+    / %41 - %46 ; "A" - "F"
 
-hex = %30 - %39 ; digits
-    / %41 - %46 ; A-F
-
-escaped = %61 ; a (alarm/bell)
-        / %62 ; b (backspace)
-        / %6e ; n (newline)
-        / %76 ; v (vertical tab)
-        / %74 ; t (tab)
-        / %75 4hex ; u (unicode escape)
-        / ascii-punct
+escaped = "a"
+        / "b"
+        / "n"
+        / "v"
+        / "t"
+        / "u" 4hex ; uXXXX (unicode escape)
+        / "-"
+        / ":"
+        / "|"
 
 unescaped-char = %32 - %2c   ; Up to dash
                / %2e - %39   ; Past dash, up to colon
@@ -315,7 +333,7 @@ string-char = backslash escaped
 
 nonempty-string = 1*string-char
 
-empty-string = dash
+empty-string = "-"
 
 string = nonempty-string
        / empty-string
@@ -339,45 +357,47 @@ description = *description-line
 
 column-name = nonempty-string
 
-table-header = pipe 1*(column-name pipe) line-sep
+table-column-names-row = "|" 1*( column-name "|" ) line-sep
 
-column-type-string = dash
+column-type-string = "-"
 
-column-type-keyword = colon dash
+column-type-keyword = ":-"
 
-column-type-boolean = colon dash colon
+column-type-boolean = ":-:"
 
-column-type-number = dash colon
+column-type-number = "-:"
 
 column-type = column-type-string
             / column-type-keyword
             / column-type-boolean
             / column-type-number
 
-table-typespec = pipe 1*(column-type pipe) line-sep
+table-column-types-row = "|" 1*( column-type "|" ) line-sep
 
 field-data = *1( string
-           / keyword
-           / number
-           / boolean )
+               / keyword
+               / number
+               / boolean )
 
-table-record = pipe 1*(field-data pipe) line-sep
+table-record-row = "|" 1*(field-data "|") line-sep
 
 table-name = 1*non-eol
 
-table-title = hash hash space table-name line-sep
+table-title = "## " table-name line-sep
 
 table-description = description
 
-table-data = table-header table-typespec *table-record
+table = line-sep table-column-names-row table-coumn-types-row *table-table-record-row
 
-table = table-title table-description table-data
+table-section = line-sep table-title table-description table-data
 
 database-name = 1*non-eol
 
-database-title = hash space database-name line-sep
+database-title = "# " database-name line-sep
 
 database-description = description
 
-database = database-title database-description *table
+preamble = description
+
+database = preamble line-sep database-title database-description *table-section
 ```
