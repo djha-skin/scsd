@@ -1,10 +1,7 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add tests for table description parsing
-  - [ ] Test single line description
-  - [ ] Test multi-line description
-  - [ ] Test empty description
+- [ ] Add function to detect header line (starts with |)
 
 ## Blocked
 None currently.
@@ -48,6 +45,10 @@ None currently.
   - [X] Test invalid table markers
   - [X] Test empty table names
 - [X] Add function to collect table description lines
+- [X] Add tests for table description parsing
+  - [X] Test single line description
+  - [X] Test multi-line description
+  - [X] Test empty description
 
 ## Backlog
 
@@ -70,7 +71,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 6: Column Headers
-- [ ] Add function to detect header line (starts with |)
 - [ ] Add function to split header line into column names
 - [ ] Add function to validate column name format
 - [ ] Add function to store column names

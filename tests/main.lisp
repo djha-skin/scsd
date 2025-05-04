@@ -145,6 +145,26 @@ Still part of it."))
   (finishes (parse-scsd (test-data-path "db_single_table")))
   (finishes (parse-scsd (test-data-path "db_multiple_tables"))))
 
+;; Tests for Table Description Parsing (Phase 5)
+(test parse-scsd-table-description ; Placeholder - Need parse-scsd to return tables/descriptions
+  "Test table description collection and joining."
+  (skip "parse-scsd does not yet return parsed tables with descriptions")
+  #|
+  (let ((tables (get-tables (parse-scsd (test-data-path "table_no_desc")))))
+    (is (= (length tables) 1))
+    (is (string= (get-table-description (first tables)) nil)))
+  (let ((tables (get-tables (parse-scsd (test-data-path "table_single_line_desc")))))
+    (is (= (length tables) 1))
+    (is (string= (get-table-description (first tables)) "This is the table description.")))
+  (let ((tables (get-tables (parse-scsd (test-data-path "table_multi_line_desc")))))
+    (is (= (length tables) 1))
+    (is (string= (get-table-description (first tables))
+                 "Line 1.
+Line 2.
+
+Line 4 after blank.")))
+  |#
+  )
 
 ;; Placeholder sanity check (can be removed later)
 (test sanity-check

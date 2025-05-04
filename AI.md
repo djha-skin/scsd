@@ -171,4 +171,9 @@ Initial setup complete. Starting parser implementation.
 - Task: "Add function to collect table description lines". 
     - Updated parser loop to collect description lines after table title.
 - Task "Add function to collect table description lines" completed. Tests pass.
-- Starting next task: "Add tests for table description parsing".
+- Task: "Add tests for table description parsing".
+    - Added test files: `table_no_desc.scsd`, `table_single_line_desc.scsd`, `table_multi_line_desc.scsd`.
+    - Added skipped test `parse-scsd-table-description`.
+- Task "Add tests for table description parsing" completed. Tests pass.
+- Starting Parser Implementation Phase 6: Column Headers.
+- Starting next task: "Add function to detect header line (starts with |)".
