@@ -1,12 +1,14 @@
 ;;;; tests/main.lisp
 
 (defpackage #:scsd-test
-  (:use #:cl #:fiveam #:scsd/utils #:scsd/conditions) ; Removed #:scsd
+  (:use #:cl #:fiveam #:scsd/utils #:scsd/conditions)
   ;; Import internal parser symbols needed for testing
   (:import-from #:scsd/parser
                 #:database-title-line-p
                 #:extract-database-name
-                #:description-line-p ; Import new symbol
+                #:description-line-p
+                #:table-title-line-p ; Import new
+                #:extract-table-name ; Import new
                 #:parse-scsd
                 ))
 
@@ -93,7 +95,7 @@ No title here"))
     (skip "parse-scsd does not yet return parsed description")
     #|
     (is (string= (get-db-description (parse-scsd (test-data-path "db_no_desc"))) nil))
-    (is (string= (get-db-description (parse-scsd (test-data-path "db_single_line_desc"))) 
+    (is (string= (get-db-description (parse-scsd (test-data-path "db_single_line_desc")))
                    "This is the description."))
     (is (string= (get-db-description (parse-scsd (test-data-path "db_multi_line_desc")))
                    "This is the first line.
@@ -105,6 +107,44 @@ This is after a blank line."))
 Still part of it."))
     |#
     )
+
+;; Tests for Table Name Parsing (Phase 4)
+(test table-title-predicate
+  "Test the table-title-line-p predicate."
+  (is-true (table-title-line-p "## Table Name"))
+  (is-true (table-title-line-p "## Another Name "))
+  (is-true (table-title-line-p "## name-with-symbols_123"))
+  (is-false (table-title-line-p " ## Not a title"))
+  (is-false (table-title-line-p "##NotATitle")) ; Missing space
+  (is-false (table-title-line-p "# Not a table title")) ; H1
+  (is-false (table-title-line-p "### Not a table title")) ; H3
+  (is-false (table-title-line-p "")))
+
+(test table-name-extraction
+  "Test the extract-table-name function."
+  (is (string= (extract-table-name "## Table Name") "Table Name"))
+  (is (string= (extract-table-name "## Another Name ") "Another Name"))
+  (is (string= (extract-table-name "## name-with-symbols_123 ") "name-with-symbols_123")))
+  ;; Malformed case (empty name) is handled by parse-scsd error
+
+(test parse-scsd-table-name-errors
+  "Test error handling for missing or malformed table names."
+  ;; Malformed table name (empty name after ##<space>)
+  (signals malformed-table-title-error
+    (parse-scsd (format nil "# DB Name~%## ~%| C |~%| - |"))) ; Use format to create string input
+
+  ;; Invalid marker (## without space) - should NOT be seen as a table title
+  ;; Currently results in "Unexpected content" warning, should finish parsing before tables.
+  (finishes (parse-scsd (test-data-path "db_malformed_table"))) ; Changed expectation
+
+  ;; Invalid marker (###) - should NOT be seen as a table title
+  (finishes (parse-scsd (test-data-path "db_invalid_table_marker")))
+
+  ;; Valid cases (should finish without table name errors)
+  (finishes (parse-scsd (test-data-path "db_no_tables")))
+  (finishes (parse-scsd (test-data-path "db_single_table")))
+  (finishes (parse-scsd (test-data-path "db_multiple_tables"))))
+
 
 ;; Placeholder sanity check (can be removed later)
 (test sanity-check

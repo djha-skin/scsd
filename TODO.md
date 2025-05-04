@@ -1,10 +1,7 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add tests for table name parsing
-  - [ ] Test valid table names
-  - [ ] Test invalid table markers
-  - [ ] Test empty table names
+- [ ] Add function to collect table description lines
 
 ## Blocked
 None currently.
@@ -43,6 +40,10 @@ None currently.
 - [X] Add function to detect table start (double hash)
 - [X] Add function to extract table name
 - [X] Add validation for table name format
+- [X] Add tests for table name parsing
+  - [X] Test valid table names
+  - [X] Test invalid table markers
+  - [X] Test empty table names
 
 ## Backlog
 
@@ -62,7 +63,6 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 5: Table Description
-- [ ] Add function to collect table description lines
 - [ ] Add tests for table description parsing
   - [ ] Test single line description
   - [ ] Test multi-line description

@@ -159,4 +159,11 @@ Initial setup complete. Starting parser implementation.
     - Updated `parse-scsd` table loop to signal error if extracted table name is empty.
     - Fixed `declare` placement error during compilation.
 - Task "Add validation for table name format" completed. Tests pass.
-- Starting next task: "Add tests for table name parsing".
+- Task: "Add tests for table name parsing".
+    - Added test files: `db_no_tables`, `db_single_table`, `db_multiple_tables`, `db_malformed_table`, `db_invalid_table_marker`.
+    - Added tests `table-title-predicate`, `table-name-extraction`, `parse-scsd-table-name-errors` to `tests/main.lisp`.
+    - Imported required internal symbols.
+    - Corrected logic/expectations in `parse-scsd-table-name-errors` based on ABNF spec.
+- Task "Add tests for table name parsing" completed. Tests pass.
+- Starting Parser Implementation Phase 5: Table Description.
+- Starting next task: "Add function to collect table description lines". Will modify parser loop.

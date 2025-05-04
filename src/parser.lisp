@@ -36,8 +36,6 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
 
 (defun parse-scsd (input)
   "Parses an SCSD input (e.g., stream or string) into an in-memory representation."
-  ;; TODO: Implement actual parsing logic
-  ;; Step 1: Read lines
   (let* ((lines (read-lines input))
          (current-index 0)
          (db-name nil)
@@ -47,16 +45,14 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
     ;; Step 2: Find and process database title
     (let ((title-line-index (position-if #'database-title-line-p lines)))
       (unless title-line-index
-        (error 'missing-database-title-error)) ; Must have title
-
+        (error 'missing-database-title-error))
       (let* ((title-line (nth title-line-index lines))
              (extracted-name (extract-database-name title-line)))
         (when (string= extracted-name "")
           (error 'malformed-database-title-error
-                 :line-number (1+ title-line-index)
-                 :title-line title-line))
+                 :line-number (1+ title-line-index) :title-line title-line))
         (setf db-name extracted-name)
-        (setf current-index (1+ title-line-index)))) ; Advance index past title
+        (setf current-index (1+ title-line-index))))
 
     ;; Step 3: Collect and join database description lines
     (let ((description-lines
@@ -70,27 +66,22 @@ Assumes line starts with '## '. Trims whitespace from the extracted name."
     ;; Step 4: Find and process tables
     (loop :while (< current-index (length lines)) :do
       (let ((line (nth current-index lines))
-            (line-num (1+ current-index))) ; For error reporting
+            (line-num (1+ current-index)))
         (cond
           ((table-title-line-p line)
            (let ((table-name (extract-table-name line)))
-             (declare (ignorable table-name)) ; Moved declare up
-             ;; Validate table name
+             (declare (ignorable table-name))
              (when (string= table-name "")
                (error 'malformed-table-title-error
-                      :line-number line-num
-                      :title-line line))
+                      :line-number line-num :title-line line))
              ;; TODO: Process table description, headers, rows...
-             (incf current-index))) ; Move past table title
+             (incf current-index)))
           ((string= (trim-whitespace line) "")
-           (incf current-index)) ; Skip blank lines between elements
+           (incf current-index))
           (t
-           ;; Found unexpected content
            ;; TODO: Define and signal error
-           (warn "Unexpected content found starting line ~A: ~S" line-num line)
+           ;; (warn "Unexpected content found starting line ~A: ~S" line-num line) ; Removed temp warning
            (return))))) ; Stop processing for now
 
-
-    ;; Remove placeholder warning eventually
-    (warn "SCSD parsing incomplete.")
-    nil)) ; Return nil for now
+    ;; Placeholder return
+    nil))
