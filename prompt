@@ -45,6 +45,15 @@ as much as possible. In order to execute any lisp code using ros, make `*.ros`
 scripts instead of using `ros --eval`. Keep them in a folder called `./scripts`
 and update them as needed, reusing them when appropriate. We've had trouble in
 the past with `ros --eval` dropping into a debugger and hanging the AI session.
-As you complete or get stuck on tasks, update the `./TODO.md` file with your
-current status and progress. Feel free to break down tasks further as needed.
+You should check this folder to see if any AIs from previous sessions have
+already made a script that you can use.  As you complete or get stuck on tasks,
+update the `./TODO.md` file with your current status and progress. Feel free to
+break down tasks further as needed.
+
+Sometimes there will be a compilation error that you do not understand. In this
+case, I recommend splitting up functions or forms into smaller ones. Forms
+(e.g. function definitions) should not exceed 30 lines or so. Functions and
+other forms should be grouped together using your best judgement as to what
+should be where, but they should be around 300 to 700 lines. They should not
+exceed 1000 lines in length. This helps keep compilation errors understandable.
 
