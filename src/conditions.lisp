@@ -8,10 +8,13 @@
            #:malformed-database-title-error
            #:malformed-table-title-error
            #:malformed-header-error
-           #:malformed-typespec-error ; Export new
-           #:mismatched-typespec-error ; Export new
-           #:missing-header-error ; Placeholder for previous TODO
-           #:missing-typespec-error ; Placeholder
+           #:malformed-typespec-error
+           #:mismatched-typespec-error
+           #:missing-header-error
+           #:missing-typespec-error
+           #:mismatched-field-count-error
+           #:malformed-field-error
+           #:invalid-number-format-error ; Export new
            ))
 
 (in-package #:scsd/conditions)
@@ -32,7 +35,7 @@
   (:default-initargs :format-control "Missing Database Title"))
 
 (define-condition malformed-database-title-error (scsd-parse-error)
-  ((title-line :initarg :title-line :reader title-line)) ; Store the problematic line
+  ((title-line :initarg :title-line :reader title-line))
   (:report (lambda (condition stream)
              (format stream "Malformed Database Title: Title line found, but database name is empty or invalid. Line ~A: ~S"
                      (line-number condition)
@@ -40,7 +43,7 @@
   (:default-initargs :format-control "Malformed Database Title"))
 
 (define-condition malformed-table-title-error (scsd-parse-error)
-  ((title-line :initarg :title-line :reader title-line)) ; Store the problematic line
+  ((title-line :initarg :title-line :reader title-line))
   (:report (lambda (condition stream)
              (format stream "Malformed Table Title: Title line found, but table name is empty or invalid. Line ~A: ~S"
                      (line-number condition)
@@ -57,7 +60,7 @@
                      (header-line condition))))
   (:default-initargs :format-control "Malformed Header Line"))
 
-(define-condition missing-header-error (scsd-parse-error) ; Added
+(define-condition missing-header-error (scsd-parse-error)
   ((table-name :initarg :table-name :reader table-name))
   (:report (lambda (condition stream)
              (format stream "Missing or invalid table header line for table '~A'.~@[ Error near line ~A.~]"
@@ -65,7 +68,7 @@
                      (line-number condition))))
   (:default-initargs :format-control "Missing or invalid table header line"))
 
-(define-condition missing-typespec-error (scsd-parse-error) ; Added
+(define-condition missing-typespec-error (scsd-parse-error)
   ((table-name :initarg :table-name :reader table-name))
   (:report (lambda (condition stream)
              (format stream "Missing or invalid type specification line for table '~A'.~@[ Error near line ~A.~]"
@@ -73,7 +76,7 @@
                      (line-number condition))))
   (:default-initargs :format-control "Missing or invalid type specification line"))
 
-(define-condition malformed-typespec-error (scsd-parse-error) ; Added
+(define-condition malformed-typespec-error (scsd-parse-error)
   ((typespec-line :initarg :typespec-line :reader typespec-line)
    (reason :initarg :reason :reader reason))
   (:report (lambda (condition stream)
@@ -83,7 +86,7 @@
                      (typespec-line condition))))
   (:default-initargs :format-control "Malformed Type Specification Line"))
 
-(define-condition mismatched-typespec-error (malformed-typespec-error) ; Added
+(define-condition mismatched-typespec-error (malformed-typespec-error)
   ((header-count :initarg :header-count :reader header-count)
    (typespec-count :initarg :typespec-count :reader typespec-count))
   (:report (lambda (condition stream)
@@ -94,3 +97,32 @@
                      (typespec-line condition))))
   (:default-initargs :format-control "Type specification count does not match header count"))
 
+(define-condition mismatched-field-count-error (scsd-parse-error)
+  ((data-line :initarg :data-line :reader data-line)
+   (header-count :initarg :header-count :reader header-count)
+   (field-count :initarg :field-count :reader field-count))
+  (:report (lambda (condition stream)
+             (format stream "Mismatched Field Count: Row has ~A field(s) but header specifies ~A column(s). Line ~A: ~S"
+                     (field-count condition)
+                     (header-count condition)
+                     (line-number condition)
+                     (data-line condition))))
+  (:default-initargs :format-control "Data row field count does not match header column count"))
+
+(define-condition malformed-field-error (scsd-parse-error)
+  ((field-value :initarg :field-value :reader field-value)
+   (reason :initarg :reason :reader reason))
+  (:report (lambda (condition stream)
+             (format stream "Malformed Field Value: ~A. Field: ~S~@[ Line: ~A~]"
+                     (reason condition)
+                     (field-value condition)
+                     (line-number condition))))
+  (:default-initargs :format-control "Malformed Field Value"))
+
+(define-condition invalid-number-format-error (malformed-field-error)
+  ()
+  (:report (lambda (condition stream)
+             (format stream "Invalid Number Format: Cannot parse ~S as number.~@[ Line: ~A~]"
+                     (field-value condition)
+                     (line-number condition))))
+  (:default-initargs :format-control "Invalid number format"))

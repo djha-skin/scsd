@@ -1,8 +1,7 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add function to split row into fields
-  - [ ] Ensure splitting does *not* trim whitespace around cell content
+- [ ] Add support for basic escape sequences
 
 ## Blocked
 None currently.
@@ -73,6 +72,27 @@ None currently.
   - [X] Test mismatched column counts
   - [X] Test type parsing with extra whitespace (e.g., `| - |`, `| :- |`)
 - [X] Add function to detect data rows
+- [X] Add function to split row into fields
+  - [X] Ensure splitting does *not* trim whitespace around cell content
+- [X] Add function to validate field count matches headers
+- [X] Add basic string field parsing
+  - [X] Ensure string field parsing preserves leading/trailing whitespace within cell pipes
+- [X] Add tests for basic row parsing
+  - [X] Test valid rows
+  - [X] Test empty fields
+  - [X] Test mismatched field counts
+  - [X] Test rows with leading/trailing whitespace in string fields
+- [X] Add number parsing
+  - [X] Integer parsing
+  - [X] Float parsing
+  - [X] Scientific notation
+- [X] Add boolean parsing
+- [X] Add keyword/symbol parsing
+- [X] Add null value handling
+- [X] Add tests for data type parsing
+  - [X] Test each data type
+  - [X] Test edge cases
+  - [X] Test invalid values
 
 ## Backlog
 
@@ -101,30 +121,12 @@ None currently.
 *None remaining*
 
 ### Parser Implementation - Phase 8: Basic Data Rows
-- [ ] Add function to validate field count matches headers
-- [ ] Add basic string field parsing
-  - [ ] Ensure string field parsing preserves leading/trailing whitespace within cell pipes
-- [ ] Add tests for basic row parsing
-  - [ ] Test valid rows
-  - [ ] Test empty fields
-  - [ ] Test mismatched field counts
-  - [ ] Test rows with leading/trailing whitespace in string fields
+*None remaining*
 
 ### Parser Implementation - Phase 9: Data Type Parsing
-- [ ] Add number parsing
-  - [ ] Integer parsing
-  - [ ] Float parsing
-  - [ ] Scientific notation
-- [ ] Add boolean parsing
-- [ ] Add keyword/symbol parsing
-- [ ] Add null value handling
-- [ ] Add tests for data type parsing
-  - [ ] Test each data type
-  - [ ] Test edge cases
-  - [ ] Test invalid values
+*None remaining*
 
 ### Parser Implementation - Phase 10: String Escaping
-- [ ] Add support for basic escape sequences
 - [ ] Add support for unicode escapes
 - [ ] Add support for ASCII punctuation escapes
 - [ ] Add tests for string escaping

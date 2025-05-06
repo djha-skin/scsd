@@ -1,168 +1,211 @@
-;;;; src/parser.lisp
-
+(defpackage #:scsd/parser
+  (:use #:cl #:scsd/utils #:scsd/conditions #:str)
+  (:import-from #:alexandria #:if-let #:ends-with-subseq)
+  (:import-from #:scsd/utils #:parse-number-string)
+  (:export #:parse-scsd
+           #:database-title-line-p #:extract-database-name
+           #:description-line-p
+           #:table-title-line-p #:extract-table-name
+           #:pipe-table-line-p #:split-pipe-table-line
+           #:parse-field))
 (in-package #:scsd/parser)
 
-;;; Predicates for identifying line types
-
 (defun database-title-line-p (line)
-  "Checks if a line starts with '# ' signifying a database title."
-  (string-starts-with-p line "# "))
+  (and line (string-starts-with-p line "# ")))
 
-(defun table-title-line-p (line)
-  "Checks if a line starts with '## ' signifying a table title."
-  (string-starts-with-p line "## "))
+(defun extract-database-name (line)
+  (when (database-title-line-p line)
+    (trim-whitespace (subseq line 2))))
 
 (defun description-line-p (line)
-  "Checks if a line is potentially part of a database or table description.
-   It should not start with '#' or '|' (or be purely whitespace)."
-  (let ((trimmed-line (trim-whitespace line)))
-    (and (> (length trimmed-line) 0) ; Not empty or just whitespace
-         (not (char= (char trimmed-line 0) #\#))
-         (not (char= (char trimmed-line 0) #\|)))))
+  (and line
+       (not (uiop:emptyp line))
+       (not (string-starts-with-p line "#"))
+       (not (string-starts-with-p line "|"))))
+
+(defun table-title-line-p (line)
+  (and line (string-starts-with-p line "## ")))
+
+(defun extract-table-name (line)
+  (when (table-title-line-p line)
+    (trim-whitespace (subseq line 3))))
 
 (defun pipe-table-line-p (line)
-  "Checks if a line starts and ends with a pipe ('|').
-   This could be a header, type spec, or data row."
-  (let ((len (length line)))
-    (and (>= len 2) ; Must have at least start and end pipe
-         (char= (char line 0) #\|)
-         (char= (char line (1- len)) #\|))))
-
-;;; Data Extractors
-
-(defun extract-database-name (title-line)
-  "Extracts the database name from a validated title line.
-Assumes line starts with '# '. Trims whitespace from the extracted name."
-  (trim-whitespace (subseq title-line 2))) ; Skip "# "
-
-(defun extract-table-name (title-line)
-  "Extracts the table name from a validated title line.
-Assumes line starts with '## '. Trims whitespace from the extracted name."
-  (trim-whitespace (subseq title-line 3))) ; Skip "## "
+  (and line
+       (> (length line) 1)
+       (string-starts-with-p line "|")
+       (ends-with-subseq "|" line)))
 
 (defun split-pipe-table-line (line)
-  "Splits a pipe-table line (header, type, data) into a list of cell strings.
-   Assumes the line starts and ends with '|'. Preserves internal whitespace."
-  ;; Remove leading and trailing pipes, then split by pipe.
-  ;; str:split with :omit-nulls nil preserves empty strings between pipes (e.g., ||)
-  (let ((inner-content (subseq line 1 (1- (length line)))))
-    (str:split #\| inner-content :omit-nulls nil)))
+  "Splits a pipe table line (e.g., | Col1 | Col2 |) into a list of strings (" Col1 " " Col2 ").
+   Handles empty columns and preserves internal whitespace.
+   Returns NIL if the line doesn't start and end with '|'."
+  (when (pipe-table-line-p line)
+    (let ((trimmed-line (subseq line 1 (1- (length line)))))
+      (str:split #\| trimmed-line :omit-nulls nil))))
 
-;;; Main parsing logic (placeholder)
+(defun parse-field (field-str type-marker &optional line-number)
+  "Parses a raw string field based on the type marker. Returns parsed value or signals error."
+  (let ((trimmed-field (trim-whitespace field-str)))
+    (cond
+      ;; String: Return the original string, preserving whitespace
+      ((string= type-marker "-") field-str)
+      ;; Keyword/Symbol: Intern as keyword, handle empty string as NIL
+      ((string= type-marker ":-")
+       (if (uiop:emptyp trimmed-field)
+           nil
+           (intern (string-upcase trimmed-field) :keyword)))
+      ;; Number: Use imported parse-number-string, handle empty string as NIL
+      ((string= type-marker "-:")
+       (if (uiop:emptyp trimmed-field)
+           nil
+           (parse-number-string trimmed-field line-number)))
+      ;; Boolean: Check for 'true'/'false' (case-insensitive), handle empty as NIL
+      ((string= type-marker ":-:")
+       (cond
+         ((uiop:emptyp trimmed-field) nil)
+         ((string-equal trimmed-field "true") t)
+         ((string-equal trimmed-field "false") nil)
+         (t (signal 'malformed-field-error
+                    :line-number line-number
+                    :field-content field-str
+                    :expected-type "Boolean ('true' or 'false')"
+                    :reason (format nil "Invalid boolean value '~A'." field-str)))))
+      ;; Unknown type marker
+      (t (error "Internal error: Unknown type marker '~A' encountered during field parsing." type-marker)))))
 
-(defun parse-scsd (input)
-  "Parses an SCSD input (e.g., stream or string) into an in-memory representation."
-  (let* ((lines (read-lines input))
+;;; Main parser function
+(defun parse-scsd (pathname)
+  "Parses an SCSD file into an in-memory representation (currently returns parsed rows for the first table)."
+  (let* ((lines (read-lines pathname))
+         (line-count (length lines))
          (current-index 0)
          (db-name nil)
-         (db-description nil))
-    (declare (ignorable db-name db-description current-index))
+         (db-description-lines '())
+         (parsed-rows '())) ; Temporary storage for first table's rows
 
-    ;; Step 2: Find and process database title
-    (let ((title-line-index (position-if #'database-title-line-p lines)))
-      (unless title-line-index
-        (error 'missing-database-title-error))
-      (let* ((title-line (nth title-line-index lines))
-             (extracted-name (extract-database-name title-line)))
-        (when (string= extracted-name "")
-          (error 'malformed-database-title-error
-                 :line-number (1+ title-line-index) :title-line title-line))
-        (setf db-name extracted-name)
-        (setf current-index (1+ title-line-index))))
+    ;; Find Database Name (H1)
+    (if-let (line (and (< current-index line-count) (nth current-index lines)))
+      (if (database-title-line-p line)
+        (progn
+          (setf db-name (extract-database-name line))
+          (unless (and db-name (not (uiop:emptyp db-name)))
+            (signal 'malformed-database-title-error :line-number (1+ current-index)))
+          (incf current-index))
+        (signal 'missing-database-title-error :line-number 1))
+      (signal 'missing-database-title-error :line-number 1)) ; Error if file is empty or first line missing
 
-    ;; Step 3: Collect and join database description lines
-    (let ((description-lines
-            (loop :for line :in (nthcdr current-index lines)
-                  :for line-num :from (1+ current-index) ; 1-based for potential errors
-                  :while (and line (description-line-p line))
-                  :do (incf current-index) ; Consume the line
-                  :collect line)))
-      (setf db-description (join-lines description-lines)))
+    ;; Collect Database Description
+    (loop while (< current-index line-count)
+          for line = (nth current-index lines)
+          while (description-line-p line)
+          do (push line db-description-lines)
+             (incf current-index))
+    (let ((db-description (join-lines (nreverse db-description-lines))))
+      (declare (ignorable db-description)))
 
-    ;; Step 4: Find and process tables
-    (loop :while (< current-index (length lines)) :do
-      (let ((line (nth current-index lines))
-            (line-num (1+ current-index)))
-        (cond
-          ((table-title-line-p line)
-           (incf current-index) ; Consume title line
-           (let* ((table-name (extract-table-name line))
-                  (table-description nil)
-                  (column-names nil)
-                  (column-types nil))
-             (declare (ignorable table-name table-description column-names column-types))
-             ;; Validate table name
-             (when (string= table-name "")
-               (error 'malformed-table-title-error
-                      :line-number line-num :title-line line))
+    ;; Process Tables
+    (loop while (< current-index line-count)
+          for line = (nth current-index lines)
+          for current-line-number = (1+ current-index)
+          do
+       (cond
+         ;; Skip blank lines between elements
+         ((uiop:emptyp (trim-whitespace line))
+          (incf current-index))
 
-             ;; Collect table description
-             (let ((description-lines
-                     (loop :for desc-line := (when (< current-index (length lines)) (nth current-index lines))
-                           :while (and desc-line (description-line-p desc-line))
-                           :do (incf current-index)
-                           :collect desc-line)))
-               (setf table-description (join-lines description-lines)))
+         ;; Detect Table Title (H2)
+         ((table-title-line-p line)
+          (let* ((table-name (extract-table-name line))
+                 (table-description-lines '())
+                 (column-names nil)
+                 (column-types nil)
+                 (current-table-rows '()))
 
-             ;; Expect Header line
-             (let ((header-line (when (< current-index (length lines)) (nth current-index lines))))
-               (unless (and header-line (pipe-table-line-p header-line))
-                 (error 'missing-header-error
-                        :table-name table-name
-                        :line-number (1+ current-index)))
-               (incf current-index) ; Consume header line
-               (let ((split-names (split-pipe-table-line header-line)))
-                 (when (or (null split-names) (member "" split-names :test #'string=))
-                   (error 'malformed-header-error
-                          :reason "Header contains empty column names (e.g., '||' or starts/ends with '||')"
-                          :line-number (1- current-index) :header-line header-line))
-                 (setf column-names split-names)))
+            ;; Validate Table Name
+            (unless (and table-name (not (uiop:emptyp table-name)))
+              (signal 'malformed-table-title-error :line-number current-line-number))
+            (incf current-index)
 
-             ;; Expect Type line
-             (let* ((typespec-line (when (< current-index (length lines)) (nth current-index lines)))
-                    (typespec-line-num (1+ current-index)))
-               (unless (and typespec-line (pipe-table-line-p typespec-line))
-                 (error 'missing-typespec-error
-                        :table-name table-name
-                        :line-number typespec-line-num))
-               (incf current-index) ; Consume typespec line
-               (let* ((raw-types (split-pipe-table-line typespec-line))
-                      (trimmed-types (mapcar #'trim-whitespace raw-types)))
-                 (unless (= (length trimmed-types) (length column-names))
-                   (error 'mismatched-typespec-error
-                          :header-count (length column-names)
-                          :typespec-count (length trimmed-types)
-                          :line-number typespec-line-num
-                          :typespec-line typespec-line))
-                 (loop :for type-marker :in trimmed-types
-                       :for col-index :from 0
-                       :unless (member type-marker '("-" ":-" "-:" ":-:") :test #'string=)
-                         :do (error 'malformed-typespec-error
-                                    :reason (format nil "Invalid type marker '~A' found for column ~A"
-                                                    type-marker (1+ col-index))
-                                    :line-number typespec-line-num
-                                    :typespec-line typespec-line))
-                 (setf column-types trimmed-types)))
+            ;; Collect Table Description
+            (loop while (< current-index line-count)
+                  for desc-line = (nth current-index lines)
+                  while (description-line-p desc-line)
+                  do (push desc-line table-description-lines)
+                     (incf current-index))
+            (let ((table-description (join-lines (nreverse table-description-lines))))
+              (declare (ignorable table-description)))
 
-             ;; Process Data Rows
-             (loop :for data-line := (when (< current-index (length lines)) (nth current-index lines))
-                   :while (and data-line (pipe-table-line-p data-line)) ; Stop if not pipe line or EOF
-                   :do (incf current-index) ; Consume data line
-                       ;; TODO: Split data line (next task)
-                       ;; TODO: Validate field count (later task)
-                       ;; TODO: Parse fields based on column-types (later task)
-                       ;; TODO: Store row
-                       (format t "~&Data Line: ~S~%" data-line) ; Temp print
-                   )
-             ;; After processing rows for this table, the main loop continues or ends
-             (format t "~&Finished table '~A'. Next index: ~A~%" table-name current-index) ; Temp print
-             )) ; End LET* for current table
-          ((string= (trim-whitespace line) "")
-           (incf current-index)) ; Skip blank lines between elements
-          (t
-           ;; Found unexpected content
-           ;; (warn "Unexpected content found starting line ~A: ~S" line-num line) ; Removed warning
-           (return))))) ; Stop processing for now
+            ;; Find Header Line
+            (let ((header-line-index current-index))
+              (if-let (header-line (and (< current-index line-count) (nth current-index lines)))
+                (if (pipe-table-line-p header-line)
+                  (progn
+                    (setf column-names (split-pipe-table-line header-line))
+                    (incf current-index))
+                  (signal 'missing-header-error :line-number (1+ header-line-index) :table-name table-name))
+                (signal 'missing-header-error :line-number (1+ header-line-index) :table-name table-name)))
 
-    ;; Placeholder return
-    nil))
+            ;; Find Type Specification Line
+            (let ((typespec-line-index current-index))
+              (if-let (typespec-line (and (< current-index line-count) (nth current-index lines)))
+                (if (pipe-table-line-p typespec-line)
+                  (let ((raw-types (split-pipe-table-line typespec-line)))
+                    (unless (= (length raw-types) (length column-names))
+                      (signal 'mismatched-typespec-error
+                              :line-number (1+ typespec-line-index)
+                              :header-count (length column-names)
+                              :typespec-count (length raw-types)))
+                    ;; Validate and store trimmed types
+                    (setf column-types
+                          (loop for type-str in raw-types
+                                for col-idx from 0
+                                for trimmed = (trim-whitespace type-str)
+                                unless (member trimmed '("-" ":-" "-:" ":-:") :test #'string=)
+                                  do (signal 'malformed-typespec-error
+                                             :line-number (1+ typespec-line-index)
+                                             :column-index col-idx
+                                             :type-value type-str)
+                                collect trimmed))
+                    (incf current-index))
+                  (signal 'missing-typespec-error :line-number (1+ typespec-line-index) :table-name table-name))
+                (signal 'missing-typespec-error :line-number (1+ typespec-line-index) :table-name table-name)))
+
+            ;; Process data rows
+            (loop while (< current-index line-count)
+                  for row-line-index = current-index
+                  for row-line = (nth current-index lines)
+                  while (pipe-table-line-p row-line)
+                  do
+               (let ((fields (split-pipe-table-line row-line)))
+                 (unless (= (length fields) (length column-names))
+                   (signal 'mismatched-field-count-error
+                           :line-number (1+ row-line-index)
+                           :header-count (length column-names)
+                           :field-count (length fields)))
+                 ;; Parse each field based on column type
+                 (push (loop for field-str in fields
+                             for type-marker in column-types
+                             collect (parse-field field-str type-marker (1+ row-line-index)))
+                       current-table-rows)
+                 (incf current-index)))
+
+            ;; TEMPORARY: Assign reversed rows to outer variable for testing return
+            (setf parsed-rows (nreverse current-table-rows))
+            ;; TEMPORARY: Stop after the first table for testing
+            (return-from parse-scsd parsed-rows))
+          ) ; End inner let* for table processing
+
+         ;; Found something unexpected
+         (t
+          (signal 'scsd-parse-error :line-number current-line-number
+                  :reason (format nil "Unexpected content: '~A'" line))
+          (incf current-index)) 
+         )
+       ) ; End cond
+    ) ; End main table loop
+
+    ;; This is unreachable due to the return-from above, causing warning
+    ;; parsed-rows 
+  ) ; End main let*
+)

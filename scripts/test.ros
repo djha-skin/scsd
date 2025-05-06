@@ -3,23 +3,28 @@
 #|
 exec ros -Q -- $0 "$@"
 |#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(:fiveam :str :alexandria) :silent t)
 
-;;; This script runs the test suite for the SCSD library.
+  ;; Ensure the test system definition is loaded relative to this script
+  (let ((script-dir (uiop:pathname-directory-pathname *load-pathname*)))
+    (push script-dir asdf:*central-registry*))
+  ;; Load the test system
+  (asdf:load-system :scsd-test :force t)
+)
 
-(require "asdf")
-(ros:quicklisp) ; Ensure Quicklisp is loaded
-(ql:quickload :str) ; Explicitly load dependency
+(defpackage :ros-script.test.3862003172
+  (:use :cl))
+(in-package :ros-script.test.3862003172)
 
-;; Ensure ASDF knows where to find .asd files in the current project directory
-(pushnew *default-pathname-defaults* asdf:*central-registry* :test #'equal)
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  ;; Run the tests
+  (let ((results (scsd-test:run-tests)))
+    ;; Exit with non-zero status if tests failed
+    ;; Fixed: Use results-status instead of results-p
+    (unless (fiveam:results-status results) 
+      (uiop:quit 1))))
 
-;; Load the test system
-(asdf:load-system :scsd-test :force t)
-
-;; Run the tests defined in the test system
-(let ((results (asdf:test-system :scsd-test)))
-  (unless results
-    (format *error-output* "Tests failed!~%")
-    (uiop:quit 1)))
-
-(uiop:quit 0)
+;;; vim: set ft=lisp lisp:

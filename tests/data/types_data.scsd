@@ -1,0 +1,9 @@
+# Type Data Test DB
+## Data Types Table
+| StringCol | KeywordCol | NumberCol | BooleanCol | StringWithSpaces | EmptyNum | EmptyBool | EmptyKey | InvalidNum | InvalidBool |
+| - | :- | -: | :-: | - | -: | :-: | :- | -: | :-: |
+| simple | simple | 123 | true |  spaces  | | | | abc | maybe |
+| another | another-key | -45.6 | false | value | 0 | true | KEY | 1.2.3 | TRUE |
+| "" | empty | 1.2e3 | TRUE | "" | 1 | FALSE | "" | nan | True |
+| - | dash | - | - | - | - | - | - | - | - |
+| | | | | | | | | | |

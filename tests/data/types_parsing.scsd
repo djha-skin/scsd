@@ -1,0 +1,13 @@
+# Type Parsing Test DB
+
+## Data Types Table
+Description for the data types table.
+
+| Str Col         | Key Col  | Num Col   | Bool Col | Null Col |
+| -               | :-       | -:        | :-:      | -        |
+| Simple String   | :keyword | 123       | true     |          |
+|  Leading Space  | :another | -45.67    | false    | NonNull  |
+| Trailing Space  | :symbol  | 1.2e3     | TRUE     |          |
+|                 |          |           |          | Last Row |
+| Invalid Number  | :ok      | not-a-num | true     |          |
+| Invalid Bool    | :ok      | 789       | maybe    |          |

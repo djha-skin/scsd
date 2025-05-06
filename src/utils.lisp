@@ -1,53 +1,49 @@
-;;;; src/utils.lisp
-
+;; src/utils.lisp
 (defpackage #:scsd/utils
-  (:use #:cl)
+  (:use #:cl) 
+  (:import-from #:scsd/conditions #:malformed-field-error) 
   (:export #:read-lines
            #:trim-whitespace
            #:string-starts-with-p
-           #:join-lines)) ; Export new utility
-
+           #:join-lines
+           #:parse-number-string))
 (in-package #:scsd/utils)
 
-(defun read-lines (input)
-  "Reads lines from INPUT (pathname, string, or stream) into a list of strings.
-Handles CR, LF, and CRLF line endings via READ-LINE, removing the line ending characters."
-  (let ((lines (make-array 0 :element-type 'string :adjustable t :fill-pointer 0)))
-    (labels ((process-stream (stream)
-               (loop :for line := (read-line stream nil nil)
-                     :while line
-                     :do (vector-push-extend line lines)))
-             (get-lines ()
-               (coerce lines 'list)))
-      (cond
-        ((pathnamep input)
-         (with-open-file (stream input :direction :input :if-does-not-exist :error)
-           (process-stream stream)))
-        ((stringp input)
-         (with-input-from-string (stream input)
-           (process-stream stream)))
-        ((streamp input)
-         (process-stream input))
-        (t (error "Input to read-lines must be a pathname, string, or stream.")))
-      (get-lines))))
+(defun read-lines (pathname)
+  "Reads all lines from a file specified by PATHNAME into a list of strings."
+  (uiop:read-file-lines pathname))
 
 (defun trim-whitespace (str)
-  "Removes leading and trailing whitespace (space, tab, newline, return, linefeed, formfeed) from STR."
+  "Removes leading and trailing whitespace from STR."
   (string-trim '(#\Space #\Tab #\Newline #\Return #\Linefeed #\Page) str))
 
 (defun string-starts-with-p (str prefix)
-  "Returns true if STR starts with PREFIX, false otherwise."
-  (let ((prefix-len (length prefix))
-        (str-len (length str)))
-    (and (>= str-len prefix-len)
-         (string= str prefix :end1 prefix-len))))
+  "Returns T if STR starts with PREFIX, NIL otherwise."
+  (and (>= (length str) (length prefix))
+       (string= prefix str :end2 (length prefix))))
 
-(defun join-lines (lines &optional (separator (string #\Newline)))
-  "Joins a list of LINES into a single string, separated by SEPARATOR (defaulting to newline)."
-  (when lines ; Return nil if input list is empty/nil
-    (with-output-to-string (s)
-      (loop :for line :in lines
-            :for first-p := t :then nil
-            :unless first-p :do (write-string separator s)
-            :do (write-string line s)))))
+(defun join-lines (lines)
+  "Joins a list of strings LINES with newline characters."
+  (format nil "~{~A~^~%~}" lines))
 
+
+;; Moved from parser.lisp
+(defun parse-number-string (field-str &optional line-number)
+  (declare (ignorable line-number))
+  (unless (uiop:emptyp field-str)
+    (handler-case (read-from-string field-str)
+      (reader-error (c)
+        (signal 'malformed-field-error 
+                :line-number line-number
+                :field-content field-str
+                :expected-type "Number"
+                :reason (format nil "Reader error: ~A" c)))
+      (:no-error (value &optional position) ; <-- Changed lambda list here
+        (declare (ignore position))         ; <-- Ignore the second value
+        (if (numberp value)
+            value
+            (signal 'malformed-field-error 
+                    :line-number line-number
+                    :field-content field-str
+                    :expected-type "Number"
+                    :reason (format nil "Parsed value '~A' is not a number." value)))))))
