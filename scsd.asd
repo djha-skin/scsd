@@ -9,6 +9,7 @@
   :components ((:file "package")
                (:file "src/conditions") ; <-- Load conditions first
                (:file "src/utils")      ; <-- Then utils
+               (:file "src/parse-string") ; <-- Added parse-string.lisp
                (:file "src/package-parser")
                (:file "src/parser")
                (:file "scsd")))

@@ -43,12 +43,14 @@ update your `AI.md` journal as we go. The code will be compiled using `ros
 build` and tested using `ros test`. Keep the code in a running, working state
 as much as possible. In order to execute any lisp code using ros, make `*.ros`
 scripts instead of using `ros --eval`. Keep them in a folder called `./scripts`
-and update them as needed, reusing them when appropriate. We've had trouble in
-the past with `ros --eval` dropping into a debugger and hanging the AI session.
-You should check this folder to see if any AIs from previous sessions have
-already made a script that you can use.  As you complete or get stuck on tasks,
-update the `./TODO.md` file with your current status and progress. Feel free to
-break down tasks further as needed.
+and update them as needed, reusing them when appropriate. In particular, I have
+written a script called `scripts/test.sh` which you should use as the primary
+tool to run the tests. This helps reduce rate limiting errors. We've also had
+trouble in the past with `ros --eval` dropping into a debugger and hanging the
+AI session. You should check this folder to see if any AIs from previous
+sessions have already made a script that you can use.  As you complete or get
+stuck on tasks, update the `./TODO.md` file with your current status and
+progress. Feel free to break down tasks further as needed.
 
 Sometimes there will be a compilation error that you do not understand. In this
 case, I recommend splitting up functions or forms into smaller ones. Forms

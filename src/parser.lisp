@@ -1,5 +1,5 @@
 (defpackage #:scsd/parser
-  (:use #:cl #:scsd/utils #:scsd/conditions #:str)
+  (:use #:cl #:scsd/parse-string #:scsd/utils #:scsd/conditions #:str)
   (:import-from #:alexandria #:if-let #:ends-with-subseq)
   (:import-from #:scsd/utils #:parse-number-string)
   (:export #:parse-scsd
@@ -48,8 +48,9 @@
   "Parses a raw string field based on the type marker. Returns parsed value or signals error."
   (let ((trimmed-field (trim-whitespace field-str)))
     (cond
-      ;; String: Return the original string, preserving whitespace
-      ((string= type-marker "-") field-str)
+      ;; String: Parse escape sequences and return
+      ((string= type-marker "-")
+       (parse-string-with-escapes field-str))
       ;; Keyword/Symbol: Intern as keyword, handle empty string as NIL
       ((string= type-marker ":-")
        (if (uiop:emptyp trimmed-field)

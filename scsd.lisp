@@ -6,6 +6,9 @@
 ;; It can be used for configuration or, as here, to connect the public API
 ;; symbols (exported from package.lisp) to their internal implementations.
 
+;; Make internal parse-string-with-escapes the public symbol implementation
+(setf (fdefinition 'parse-string-with-escapes) #'scsd/parse-string:parse-string-with-escapes)
+
 ;; Make the internal parser function the implementation for the public symbol.
 ;; Using a simple function alias here. More complex scenarios might involve wrappers.
 (setf (fdefinition 'parse-scsd) #'scsd/parser:parse-scsd)
