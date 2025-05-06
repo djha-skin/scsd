@@ -17,6 +17,7 @@
                (#\\  (values "\\" (+ i 2)))
                (#\" (values "\"" (+ i 2)))
                (#\n (values  "\n" (+ i 2)))
+               (#\t (values "\t" (+ i 2)))
                (otherwise  (values (concatenate 'string "\\" (char-to-string next-char)) (+ i 2)))))
        (error \"Incomplete escape sequence at end of string.\")))
 
