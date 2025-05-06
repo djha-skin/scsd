@@ -57,3 +57,6 @@ other forms should be grouped together using your best judgement as to what
 should be where, but they should be around 300 to 700 lines. They should not
 exceed 1000 lines in length. This helps keep compilation errors understandable.
 
+We often get rate limited by AI APIs. between every meaningful action,
+therefore, I request that you run `sleep 15` to slow the rate of token use down
+sufficient to stay below the rate limiting.
