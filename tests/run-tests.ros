@@ -1,0 +1,4 @@
+;; tests/run-tests.ros
+(ql:quickload :scsd-test)
+(scsd-test:run-tests)
+(quit)

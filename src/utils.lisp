@@ -7,7 +7,6 @@
            #:string-starts-with-p
            #:join-lines
            #:parse-number-string
-           #:parse-string-with-escapes
            #:parse-unicode-escape
            #:hex-digit-p
            #:hex-digit-to-int))
@@ -52,34 +51,7 @@
         (values (code-char value) (+ start length)))
       (error "Malformed escape: truncated hex sequence in ~A" str)))
 
-(defun parse-string-with-escapes (str)
-  "Processes a string STR, replacing escape sequences like \n, \t, Unicode \uXXXX and \UXXXXXXXX, and more with their actual characters."
-  (let ((result "")
-        (i 0)
-        (len (length str)))
-    (loop while (< i len)
-      for char = (elt str i)
-      do
-        (setf result
-              (concatenate 'string result
-                           (cond
-                             ((and (= char #\\) (< (1+ i) len))
-                              (let ((next-char (elt str (1+ i))))
-                                (case next-char
-                                  (#\\ (setf i (1+ i)) "\\")
-                                  (#\" (setf i (1+ i)) "\"")
-                                  (#\n (setf i (1+ i)) (string #\Newline))
-                                  (#\t (setf i (1+ i)) (string #\Tab))
-                                  (#\u (multiple-value-bind (char new-i) (parse-unicode-escape str (+ i 2) 4)
-                                           (setf i new-i)
-                                           (string char)))
-                                  (#\U (multiple-value-bind (char new-i) (parse-unicode-escape str (+ i 2) 8)
-                                           (setf i new-i)
-                                           (string char)))
-                                  (otherwise (concatenate 'string (string char) (string next-char)))))
-                             (t (string char))))))
-        (incf i))
-        result))
+;;; NOTE: parse-string-with-escapes removed and moved to src/parse-string.lisp
 
 ;; Moved from parser.lisp
 (defun parse-number-string (field-str &optional line-number)
