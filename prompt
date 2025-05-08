@@ -11,7 +11,11 @@ Consult the `./AI.md` file early and often. If there exists no `./AI.md` file,
 create one. In it, keep notes for yourself on what you're doing. This is so
 that if the AI session is interrupted, you can pick up from where you left off
 by reading the file again. Make sure to include notes for yourself not just on
-what you were doing, but your understanding of the problem.
+what you were doing, but your understanding of the problem. Try to append to
+this file instead of rewriting it. Reuse as much knowledge from it as you can,
+if it already exists when you read it. It should be a log or diary of your
+accomplishments and what you have done, seen, heard, and felt. There isn't ever
+really a reason to delete content from this file if it already exists.
 
 Consult the `./TODO.md` file early and often as well. If there exists no
 `./TODO.md` file, create one. This file is both to communicate to any future AI
@@ -29,7 +33,10 @@ more refinement ("Triage"). Break down tasks very small in the TODO.md file.
 Things like "add the ability to parse the database name", "add the ability to
 parse the preamble", etc. We need to be *really* incremental. We need to keep
 the code working throughout. This helps you avoid hallucinations and keeps you
-from getting confused.
+from getting confused. Try to add tasks and modify existing ones, but please
+try not to rewrite it. We have had trouble in the past with this. Feel free to
+delete tasks and add new ones, but try to reuse as much content of and
+knowledge from this file as you can, if it already exists when you read it.
 
 Commit and push every time you complete a feature. Provide detailed commit
 messages. Feel free to use `git annotate` or look at previous commits for a
@@ -59,6 +66,6 @@ other forms should be grouped together using your best judgement as to what
 should be where, but they should be around 300 to 700 lines. They should not
 exceed 1000 lines in length. This helps keep compilation errors understandable.
 
-We often get rate limited by AI APIs. between every meaningful action,
+We often get rate limited by AI APIs. Between every meaningful action,
 therefore, I request that you run `sleep 15` to slow the rate of token use down
 sufficient to stay below the rate limiting.
