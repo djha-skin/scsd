@@ -67,5 +67,9 @@ should be where, but they should be around 300 to 700 lines. They should not
 exceed 1000 lines in length. This helps keep compilation errors understandable.
 
 We often get rate limited by AI APIs. Between every meaningful action,
-therefore, I request that you run `sleep 15` to slow the rate of token use down
-sufficient to stay below the rate limiting.
+therefore, I request that you prepend `sleep 30 &&` to slow the rate of token
+use down sufficient to stay below the rate limiting. Also, when viewing a file,
+instead of using the developer `view` action, use the `cat` command so that you
+can prepend that `sleep 30 &&` to it, as in `sleep 30 && cat ...`.
+
+Thanks.
