@@ -257,4 +257,5 @@ Initial setup complete. Starting parser implementation.
     - Reviewed `parse-field` logic for empty strings for boolean, keyword, number types (all return `nil`).
     - Confirmed string type returns `""` for empty field.
 - Task "Add null value handling" completed. Tests pass.
-- Starting next task: "Add tests for data type parsing".
+- Starting Parser Implementation Phase 10: String Escaping.
+    - Current Task: "Add support for unicode escapes".

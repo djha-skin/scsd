@@ -1,9 +1,15 @@
 # Project Tasks
 
 ## In Progress
-- [ ] Add support for basic escape sequences
+- [X] Add support for basic escape sequences
 
-## Blocked
+## In Progress
+- [ ] Implement parsing of ASCII punctuation escapes (\\", \\\\, \\/, etc.)
+- [ ] Handle malformed ASCII punctuation escape sequences
+- [ ] Implement parsing of \\uXXXX escape sequences
+- [ ] Implement parsing of \\UXXXXXXXX escape sequences
+- [ ] Handle malformed unicode escape sequences
+- [ ] Add unicode support for `make-string`
 None currently.
 
 ## Done
@@ -133,7 +139,11 @@ None currently.
   - [ ] Test each escape sequence
   - [ ] Test invalid escapes
 
-### Data Structure Implementation
+### Parser Implementation - Phase 10: String Escaping
+- [ ] Add support for ASCII punctuation escapes
+- [ ] Add tests for string escaping
+  - [ ] Test each escape sequence
+  - [ ] Test invalid escapes
 - [ ] Define basic table structure
 - [ ] Add column metadata storage
 - [ ] Add row storage

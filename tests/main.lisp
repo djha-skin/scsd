@@ -38,7 +38,7 @@
 
 (test description-line-predicate
   ;;Description of that test function
-  (is (string= "hello" (parse-string-with-escapes "hello"))))
+  (is (equal (parse-string-with-escapes "hello") "hello")))
 
 (defun run-tests ()
   "Run all defined tests."
