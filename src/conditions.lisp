@@ -14,8 +14,11 @@
            #:missing-typespec-error
            #:mismatched-field-count-error
            #:malformed-field-error
-           #:invalid-number-format-error ; Export new
-           ))
+           #:invalid-number-format-error
+           ;; New escape sequence related conditions
+           #:malformed-escape-error
+           #:incomplete-escape-error
+           #:invalid-unicode-escape-error))
 
 (in-package #:scsd/conditions)
 
@@ -26,6 +29,9 @@
                      (line-number condition)
                      (simple-condition-format-control condition)
                      (simple-condition-format-arguments condition)))))
+
+;; Keep all existing base conditions first
+;; Then add new escape sequence related ones at the end
 
 (define-condition missing-database-title-error (scsd-parse-error)
   ()
@@ -126,3 +132,26 @@
                      (field-value condition)
                      (line-number condition))))
   (:default-initargs :format-control "Invalid number format"))
+
+(define-condition malformed-escape-error (scsd-parse-error)
+  ((escape-sequence :initarg :escape-sequence :reader escape-sequence :initform nil))
+  (:report (lambda (condition stream)
+             (format stream "Malformed escape sequence~@[: Invalid escape '~A'~].~@[ Line: ~A~]"
+                     (escape-sequence condition)
+                     (line-number condition))))
+  (:default-initargs :format-control "Malformed escape sequence"))
+
+(define-condition incomplete-escape-error (malformed-escape-error)
+  ()
+  (:report (lambda (condition stream)
+             (format stream "Incomplete escape sequence: String ends with a backslash.~@[ Line: ~A~]"
+                     (line-number condition))))
+  (:default-initargs :format-control "Incomplete escape sequence"))
+
+(define-condition invalid-unicode-escape-error (malformed-escape-error)
+  ((unicode-sequence :initarg :unicode-sequence :reader unicode-sequence :initform nil))
+  (:report (lambda (condition stream)
+             (format stream "Invalid Unicode escape sequence~@[ '~A'~]: Must be \\u followed by exactly 4 hex digits.~@[ Line: ~A~]"
+                     (unicode-sequence condition)
+                     (line-number condition))))
+  (:default-initargs :format-control "Invalid Unicode escape sequence"))

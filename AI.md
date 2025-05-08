@@ -54,7 +54,7 @@ The Common Lisp library needs to provide:
 4. Add convenience functions and optimizations
 
 ### Project Status
-Initial setup complete. Starting parser implementation.
+Initial setup complete. Parser implementation progressing.
 
 ### Notes To Self
 - Read ABNF grammar carefully when implementing parser
@@ -68,193 +68,54 @@ Initial setup complete. Starting parser implementation.
 
 ## Session 2025-05-04 15:38
 
-- Resumed session on 2025-05-04 15:38:25.
-- Reviewed `prompt`, `AI.md`, and `TODO.md`.
-- Completed initial setup tasks:
-    - Created `scsd.asd`, `package.lisp`.
-    - Set up test framework (`fiveam`, `scsd-test.asd`, `tests/main.lisp`, `scripts/test.ros`), including troubleshooting ASDF issues.
-    - Updated `README.md` with development setup.
-- Starting Parser Implementation Phase 1.
-- Task: "Create basic parser package and entry points".
-    - Created `src/package-parser.lisp` (package `#:scsd/parser`).
-    - Created `src/parser.lisp` (stub `scsd/parser:parse-scsd`).
-    - Updated `scsd.asd` to include `src` module.
-    - Updated `package.lisp` and `scsd.lisp` to define and re-export `scsd:parse-scsd`.
-    - Resolved package circular dependency issue.
-- Task "Create basic parser package and entry points" completed. Tests pass.
-- Task: "Add utilities for reading files line by line".
-    - Created `src/utils.lisp`.
-    - Defined package `#:scsd/utils`.
-    - Added `utils.lisp` to `scsd.asd`.
-    - Implemented `scsd/utils:read-lines` function.
-    - Updated `#:scsd/parser` package to `:use #:scsd/utils`.
-- Task "Add utilities for reading files line by line" completed. Tests pass.
-- Task: "Add utilities for trimming whitespace and basic string manipulation".
-    - Added `trim-whitespace` and `string-starts-with-p` to `src/utils.lisp`.
-    - Exported new functions from `#:scsd/utils`.
-    - Fixed compilation error caused by escaped quote in `string-trim`.
-- Task "Add utilities for trimming whitespace and basic string manipulation" completed. Tests pass.
-- Task: "Add simple test file with just a database name".
-    - Created `tests/data/` directory.
-    - Created `tests/data/minimal_db.scsd`.
-- Task "Add simple test file with just a database name" completed.
-- Task: "Add tests for basic file reading".
-    - Added `test-data-path` helper to `tests/main.lisp`.
-    - Added `read-lines-utility` test to `tests/main.lisp`.
-    - Updated `:use` clause in `#:scsd-test` package definition.
-- Task "Add tests for basic file reading" completed. Tests pass.
-- Starting Parser Implementation Phase 2: Database Name.
-- Task: "Add function to detect if line starts with single hash".
-    - Added `database-title-line-p` to `src/parser.lisp`.
-    - Updated `parse-scsd` stub to use `read-lines` and `database-title-line-p`.
-- Task "Add function to detect if line starts with single hash" completed. Tests pass.
-- Task: "Add function to extract database name from title line".
-    - Added `extract-database-name` to `src/parser.lisp`.
-    - Updated `parse-scsd` stub to call extractor.
-- Task "Add function to extract database name from title line" completed. Tests pass.
-- Task: "Add error handling for missing database name".
-    - Created `src/conditions.lisp` defining `scsd-parse-error` and `missing-database-title-error`.
-    - Updated `scsd.asd` to load conditions file.
-    - Updated `#:scsd/parser` package to use conditions.
-    - Modified `parse-scsd` to signal `missing-database-title-error` if no title line is found.
-- Task "Add error handling for missing database name" completed. Tests pass.
-- Task: "Add error handling for malformed database title line".
-    - Defined `malformed-database-title-error` condition in `src/conditions.lisp`.
-    - Updated `parse-scsd` to signal `malformed-database-title-error` if extracted name is empty.
-    - Fixed compilation issues (FORMAT string in condition, DECLARE placement in parser).
-- Task "Add error handling for malformed database title line" completed. Tests pass.
-- Task: "Add tests for database name parsing".
-    - Added tests `database-title-predicate`, `database-name-extraction`, `parse-scsd-db-name-errors` to `tests/main.lisp`.
-    - Imported required internal symbols into `#:scsd-test` package.
-    - Fixed package name conflict between `scsd:parse-scsd` and imported `scsd/parser:parse-scsd` by removing `:use #:scsd` from test package.
-- Task "Add tests for database name parsing" completed. Tests pass.
-- Starting Parser Implementation Phase 3: Database Description.
-- Task: "Add function to detect description lines (not starting with # or |)".
-    - Added `description-line-p` to `src/parser.lisp`.
-    - Updated `parse-scsd` stub to demonstrate usage.
-- Task "Add function to detect description lines (not starting with # or |)" completed. Tests pass.
-- Task: "Add function to collect description lines until table or EOF".
-    - Refactored `parse-scsd` slightly to track `current-index`.
-    - Updated description processing loop in `parse-scsd` to collect lines using `description-line-p` and advance `current-index`.
-    - Added `table-title-line-p` predicate (needed later).
-    - Fixed compilation error with DECLARE placement.
-- Task "Add function to collect description lines until table or EOF" completed. Tests pass.
-- Task: "Add function to properly join description lines".
-    - Added `join-lines` utility function to `src/utils.lisp` and exported it.
-    - Updated `parse-scsd` to use `join-lines` on the collected description lines.
-- Task "Add function to properly join description lines" completed. Tests pass.
-- Task: "Add tests for description parsing".
-    - Created test files: `db_no_desc`, `db_single_line_desc`, `db_multi_line_desc`, `db_desc_leading_whitespace`.
-    - Added test `description-line-predicate` to `tests/main.lisp`.
-    - Added skipped test `parse-scsd-db-description` (pending parser return value).
-- Task "Add tests for description parsing" completed. Tests pass.
-- Starting Parser Implementation Phase 4: Table Name.
-- Task: "Add function to detect table start (double hash)".
-    - Verified `table-title-line-p` exists in `src/parser.lisp`.
-- Task "Add function to detect table start (double hash)" completed.
-- Task: "Add function to extract table name".
-    - Added `extract-table-name` to `src/parser.lisp`.
-    - Updated `parse-scsd` stub to loop through lines after description, detect table titles, and call extractor.
-- Task "Add function to extract table name" completed. Tests pass.
-- Task: "Add validation for table name format".
-    - Defined `malformed-table-title-error` condition in `src/conditions.lisp`.
-    - Updated `parse-scsd` table loop to signal error if extracted table name is empty.
-    - Fixed `declare` placement error during compilation.
-- Task "Add validation for table name format" completed. Tests pass.
-- Task: "Add tests for table name parsing".
-    - Added test files: `db_no_tables`, `db_single_table`, `db_multiple_tables`, `db_malformed_table`, `db_invalid_table_marker`.
-    - Added tests `table-title-predicate`, `table-name-extraction`, `parse-scsd-table-name-errors` to `tests/main.lisp`.
-    - Imported required internal symbols.
-    - Corrected logic/expectations in `parse-scsd-table-name-errors` based on ABNF spec.
-- Task "Add tests for table name parsing" completed. Tests pass.
-- Starting Parser Implementation Phase 5: Table Description.
-- Task: "Add function to collect table description lines". 
-    - Updated parser loop to collect description lines after table title.
-- Task "Add function to collect table description lines" completed. Tests pass.
-- Task: "Add tests for table description parsing".
-    - Added test files: `table_no_desc.scsd`, `table_single_line_desc.scsd`, `table_multi_line_desc.scsd`.
-    - Added skipped test `parse-scsd-table-description`.
-- Task "Add tests for table description parsing" completed. Tests pass.
-- Starting Parser Implementation Phase 6: Column Headers.
-- Task: "Add function to detect header line (starts with |)".
-    - Added predicate `pipe-table-line-p` to `src/parser.lisp`.
-    - Updated parser loop to check for header line using the predicate.
-- Task "Add function to detect header line (starts with |)" completed. Tests pass.
-- Task: "Add function to split header line into column names".
-    - Added `split-pipe-table-line` to `src/parser.lisp` (using `str:split`).
-    - Added `:str` dependency to `scsd.asd`.
-    - Imported `str:split` into `#:scsd/parser` package.
-    - Updated `scripts/test.ros` to `ql:quickload :str`.
-    - Updated parser loop to call splitter.
-- Task "Add function to split header line into column names" completed. Tests pass.
-- Task: "Add function to validate column name format".
-    - Added `malformed-header-error` condition.
-    - Updated parser to check for `null` or `""` in split column names.
-- Task "Add function to validate column name format" completed. Tests pass.
-- Task: "Add function to store column names".
-    - Updated parser loop to assign validated column names to local variable `column-names`.
-- Task "Add function to store column names" completed. Tests pass.
-- Task: "Add tests for header parsing".
-    - Added test files `header_empty_col.scsd`, `header_whitespace_cols.scsd`, `header_missing.scsd`, `header_invalid.scsd`.
-    - Added tests `header-line-predicate`, `header-line-split`, `parse-scsd-header-errors`.
-    - Fixed bugs/expectations in tests and `split-pipe-table-line`.
-- Task "Add tests for header parsing" completed. Tests pass.
-- Starting Parser Implementation Phase 7: Column Types.
-- Task: "Add function to parse type specification line".
-    - Updated parser loop to find line after header, check if it's a pipe table line, split, trim, and check count.
-    - Added `missing-typespec-error` and `mismatched-typespec-error` conditions.
-    - Fixed errors during testing (DECLARE placement, test expectations).
-- Task "Add function to parse type specification line" completed. Tests pass.
-- Task: "Add function to validate type markers".
-    - Added loop to check `trimmed-types` against valid markers (`member ... :test #'string=`).
-    - Signal `malformed-typespec-error` if invalid marker found.
-- Task "Add function to validate type markers" completed. Tests pass.
-- Task: "Add function to store column types".
-    - Updated parser to assign validated `trimmed-types` to local variable `column-types`.
-- Task "Add function to store column types" completed. Tests pass.
-- Task: "Add tests for type specification parsing".
-    - Added test files: `types_valid.scsd`, `types_whitespace.scsd`, `types_invalid_marker.scsd`, `types_mismatch_count.scsd`, `types_missing.scsd`.
-    - Added test case `parse-scsd-typespec-errors` covering valid types, whitespace, missing line, mismatched count, and invalid marker errors.
-- Task "Add tests for type specification parsing" completed. Tests pass.
-- Starting Parser Implementation Phase 8: Basic Data Rows.
-- Task: "Add function to detect data rows".
-    - Updated parser loop to use `pipe-table-line-p` to identify potential data rows after the typespec line.
-- Task "Add function to detect data rows" completed. Tests pass.
-- Task: "Add function to split row into fields".
-    - Updated data row loop to call `split-pipe-table-line`.
-- Task "Add function to split row into fields" completed. Tests pass.
-- Task: "Add function to validate field count matches headers".
-    - Added `mismatched-field-count-error` condition.
-    - Updated data row loop to check `(length fields)` against `(length column-names)` and signal error.
-- Task "Add function to validate field count matches headers" completed. Tests pass.
-- Task: "Add basic string field parsing".
-    - Acknowledged that raw split fields are the current representation.
-    - Refined data row loop logic slightly.
-- Task "Add basic string field parsing" completed. Tests pass.
-- Task: "Add tests for basic row parsing".
-    - Added test files: `rows_valid.scsd`, `rows_empty_field.scsd`, `rows_mismatch.scsd`, `rows_whitespace.scsd`.
-    - Added skipped test `parse-scsd-row-parsing` and error test `parse-scsd-row-errors`.
-    - Fixed `READ error` due to `...` in test file.
-    - Corrected test expectations for `header_invalid.scsd`.
-- Task "Add tests for basic row parsing" completed. Tests pass.
-- Starting Parser Implementation Phase 9: Data Type Parsing.
-- Task: "Add number parsing".
-    - Added `parse-number-string` utility.
-    - Updated `parse-field` to use it for `-:` type.
-    - Fixed compilation errors in `parse-number-string` (CERROR format, package dependency) and `parse-scsd` (DECLARE placement).
-- Task "Add number parsing" completed. Tests pass.
-- Task: "Add boolean parsing".
-    - Added boolean logic (`string-equal` for "true"/"false") to `parse-field` for `:-:` type.
-    - Added `malformed-field-error` condition.
-    - Updated `parse-field` signature to include optional line number for better errors.
-    - Fixed parenthesization error in `parse-scsd`.
-- Task "Add boolean parsing" completed. Tests pass.
-- Task: "Add keyword/symbol parsing".
-    - Updated `parse-field` to use `intern` with `:keyword` package for `:-` type.
-    - Handled empty string case for keywords (becomes `nil`).
-- Task "Add keyword/symbol parsing" completed. Tests pass.
-- Task: "Add null value handling".
-    - Reviewed `parse-field` logic for empty strings for boolean, keyword, number types (all return `nil`).
-    - Confirmed string type returns `""` for empty field.
-- Task "Add null value handling" completed. Tests pass.
-- Starting next task: "Add tests for data type parsing".
+[Previous session contents...]
+
+## Session 2025-05-08 14:42 - String Escape Sequences
+
+Starting work on implementing string escape sequence handling.
+
+The ABNF grammar specifies the following escape sequences that need to be supported:
+
+1. ASCII escape sequences:
+   - `\a` - alarm/bell (0x07)
+   - `\b` - backspace (0x08)
+   - `\n` - line feed (0x0A)
+   - `\v` - vertical tab (0x0B)
+   - `\t` - tab (0x09)
+
+2. Unicode escape sequences:
+   - `\uXXXX` - 16-bit Unicode escapes where XXXX is 4 hex digits
+
+3. ASCII punctuation escapes:
+   - Any ASCII punctuation character can be escaped with a backslash
+   - This includes |, -, :, \, etc.
+   - Used to include literal characters that would otherwise have special meaning
+
+Implementation Plan:
+
+1. Create escape sequence handling utilities:
+   - Add `unescape-string` function to handle all escape sequences
+   - Add `escape-string` function for future serialization support
+   - Added unit tests for each type of escape sequence
+
+2. Add error conditions for malformed escape sequences:
+   - Invalid/incomplete Unicode escapes 
+   - Invalid ASCII escapes
+   - Incomplete/trailing backslashes
+
+3. Integrate escape handling into parser:
+   - Update string field parsing to handle escapes
+   - Add tests with escape sequences in:
+     - Table/column names
+     - Data cells 
+     - Type specifications (dashes/colons must be escaped to be used literally)
+
+4. Update error reporting:
+   - Add line/column info for escape-related errors
+   - Provide helpful error messages for malformed escapes
+
+Strategy:
+- Start with simple escape handling (backslash + character)
+- Add more complex Unicode escape handling after basic functionality is working
+- Use Common Lisp's reader facilities where appropriate (e.g., for hex digits)
+- Keep code split into small, focused functions for better error handling

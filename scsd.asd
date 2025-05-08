@@ -6,9 +6,13 @@
   :version "0.0.1"
   :serial t
   :depends-on (#:str #:alexandria)
-  :components ((:file "package")
-               (:file "src/conditions") ; <-- Load conditions first
-               (:file "src/utils")      ; <-- Then utils
-               (:file "src/package-parser")
-               (:file "src/parser")
-               (:file "scsd")))
+  :components 
+  ((:file "package")
+   (:module "src"
+    :serial t
+    :components
+    ((:file "conditions")
+     (:file "utils")
+     (:file "package-parser") 
+     (:file "parser")))
+   (:file "scsd")))
